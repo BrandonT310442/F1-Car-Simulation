@@ -1,28 +1,43 @@
-<!DOCTYPE html>
+<html>
+<head>
 <style>
-    #ramp {
+
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+#car {
   
-  width: 812px;
-  height: 415px;
+  width: 59.165px;
+  height: 25.165px;
   position: absolute;
   margin-left: auto;
 margin-right: auto;
+top:200px;
 }
-</style>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Physics ISP</title>
-</head>
-<body>
-    
-</body>
-<center>
-<canvas id="canvas" width="1000" height="500" style="border:1px solid #000000;">
-</center>
-<img id="ramp"src="/images/rampremove.png" alt="">
 
-<script src="index.js"></script>
+
+body {
+
+    background: #0C0A0F;
+}
+
+canvas {
+  background-image: url("images/racingtrack.png");
+  background-size: 100% 100%;
+  
+}
+
+/* I wrote the CSS */
+</style>
+</head>
+
+<canvas id="myCanvas" width= "906.25" height="510">
+
+</canvas>
+<div id="space"></div>
+<body>
+
+<img id="car" src="images/f1remove.png"/>
+
+<script type="text/javascript" src="index.js"></script>
+</body>
 </html>
+<!-- My partner wrote the HTML -->
