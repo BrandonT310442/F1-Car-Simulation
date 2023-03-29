@@ -1,64 +1,37 @@
-
-var canvas = document.getElementById("myCanvas"); // My partner wrote this
-var ctx = canvas.getContext("2d"); // My partner wrote this
-
-
-
-
-  var increment = 0;
-
-var arrowLeft = false; // My partner wrote this
-var arrowUp = false; // My partner wrote this
-var arrowRight = false; // My partner wrote this
-var arrowDown = false; // My partner wrote this
-var spacebarPressed = false; // My partner wrote this 
-var carspeed = 2.5; // My partner and I wrote this
-
-var alienheight = 50; // I wrote this
-var alienwidth = 50; // I wrote this
-var spawnRate = 1000; // My partner and I wrote this
-
-var carx1 = canvas.width/2; // I wrote this
-
-var cary1 = 500 // My partner and I wrote this
-
-var gravity = 3; // My partner and I wrote this
-
-
-
-class createElement{
-
-
-  constructor(element,x,y,w,h){
-  this.element = element;
-  this.x = x;
-  this.y = y;
-  this.w = w;
-  this.h = h;
-
-
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+var increment = 0;
+var arrowLeft = false;
+var arrowUp = false;
+var arrowRight = false;
+var arrowDown = false;
+var spacebarPressed = false;
+var carspeed = 2.5;
+var alienheight = 50;
+var alienwidth = 50;
+var spawnRate = 1000;
+var carx1 = canvas.width / 2;
+var cary1 = 500
+var gravity = 3;
+class createElement {
+  constructor(element, x, y, w, h) {
+    this.element = element;
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
   }
-} // I wrote this 
-
-
-
+}
 function setpositionelements(car) {
   var a = document.getElementById(car.element);
   a.style.left = car.x + 'px';
   a.style.top = car.y + 'px';
-} // I wrote this
-
-
-
-
-
+}
 function gameover() {
-
-var getscore = document.getElementById("number").innerHTML;
-
-localStorage.setItem("getscore", getscore)
-  window.location.href="gameoverdefaultgame.html";
-} // My partner wrote this
+  var getscore = document.getElementById("number").innerHTML;
+  localStorage.setItem("getscore", getscore)
+  window.location.href = "gameoverdefaultgame.html";
+}
 
 // function Boundaries(car) {
 
@@ -80,142 +53,78 @@ localStorage.setItem("getscore", getscore)
 //   }
 // } // My partner and I wrote this
 
-
-
-
-
-
-
-
-
 function showelements() {
   setpositionelements(car);
-
- 
-
-} // I wrote this
-
-
-
-
-
-  
-function getDistance(x1, y1, x2, y2){
-
-var xDistance = x2 - x1; 
-var yDistance = y2 - y1; 
-
-return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
-
-} // I wrote this
-
-
-
-
+}
+function getDistance(x1, y1, x2, y2) {
+  var xDistance = x2 - x1;
+  var yDistance = y2 - y1;
+  return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
+}
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
-
 function keyDownHandler(e) {
-
-    if(e.key == "ArrowRight" || e.key == "ArrowRight") {
-
-        arrowRight = true;
-    }
-    else if(e.key == "ArrowLeft" || e.key == "ArrowLeft") {
-
-        arrowLeft = true;
-    } else if(e.key == "ArrowUp" || e.key == "ArrowUp") {
-      arrowUp = true;
+  if (e.key == "ArrowRight" || e.key == "ArrowRight") {
+    arrowRight = true;
   }
-  else if(e.key == "ArrowDown" || e.key == "ArrowDown") {
-      arrowDown = true;
+  else if (e.key == "ArrowLeft" || e.key == "ArrowLeft") {
+    arrowLeft = true;
+  } else if (e.key == "ArrowUp" || e.key == "ArrowUp") {
+    arrowUp = true;
   }
-
-    else if(e.key == " " || e.key == "Space"){
-        spacebarPressed = true;
-    }
-
-} // My partner wrote this
-
+  else if (e.key == "ArrowDown" || e.key == "ArrowDown") {
+    arrowDown = true;
+  }
+  else if (e.key == " " || e.key == "Space") {
+    spacebarPressed = true;
+  }
+}
 function keyUpHandler(e) {
-    if(e.key == "ArrowRight" || e.key == "ArrowRight") { 
-        arrowRight = false;
-    }
-    else if(e.key == "ArrowLeft" || e.key == "ArrowLeft") {
-        arrowLeft = false;
-    }    
-    else if(e.key == "ArrowUp" || e.key == "ArrowUp") {
-        arrowUp = false;
-    }
-    else if(e.key == "ArrowDown" || e.key == "ArrowDown") {
-        arrowDown = false;
-    }
-
-        else if(e.key == " " || e.key == "Space"){
-
-        spacebarPressed = false;
-        }
-
- 
-
-} // My partner wrote this
-
+  if (e.key == "ArrowRight" || e.key == "ArrowRight") {
+    arrowRight = false;
+  }
+  else if (e.key == "ArrowLeft" || e.key == "ArrowLeft") {
+    arrowLeft = false;
+  }
+  else if (e.key == "ArrowUp" || e.key == "ArrowUp") {
+    arrowUp = false;
+  }
+  else if (e.key == "ArrowDown" || e.key == "ArrowDown") {
+    arrowDown = false;
+  }
+  else if (e.key == " " || e.key == "Space") {
+    spacebarPressed = false;
+  }
+}
 let rotationincrement = 5;
-
 function controls() {
   let carele = document.getElementById("car");
-
   if (arrowUp) {
     car.y -= carspeed;
-     cary1 -= carspeed;
-
-  } // My partner wrote this
+    cary1 -= carspeed;
+  }
   if (arrowDown) {
     car.y += carspeed;
     cary1 += carspeed;
-  } // My partner wrote this
+  }
   if (arrowLeft) {
     car.x -= carspeed;
     carx1 -= carspeed;
     carele.style.transform = `rotate(${rotationincrement}deg)`;
     rotationincrement--;
-  } //My partner wrote this
+  }
   if (arrowRight) {
     car.x += carspeed;
     carx1 += carspeed;
-  } //My partner wrote this
-
-
-  
+  }
   // Boundaries(car);
-  // I wrote this
-} 
-
-
-
-var carx = (screen.width/2)-50 // I wrote this
-var cary = 425; // I wrote this
-
-console.log(carx) // I wrote this
-var car = new createElement('car', carx, cary, 100, 100); // I wrote this
-
-
-
-
+}
+var carx = (screen.width / 2) - 50
+var cary = 425;
+console.log(carx)
+var car = new createElement('car', carx, cary, 100, 100);
 function draw() {
-  
-
-    controls();
-    showelements();
-
-
-    
-  } // I wrote this
-
-
-  setInterval(draw, 2); // I wrote this
-
-
-
-
-
+  controls();
+  showelements();
+}
+setInterval(draw, 2); 
