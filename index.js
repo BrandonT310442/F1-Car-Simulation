@@ -6,13 +6,14 @@ var arrowUp = false;
 var arrowRight = false;
 var arrowDown = false;
 var spacebarPressed = false;
-var carspeed = 2.5;
-var alienheight = 50;
-var alienwidth = 50;
-var spawnRate = 1000;
-var carx1 = canvas.width / 2;
-var cary1 = 500
-var gravity = 3;
+var carspeed = 1.0;
+
+var backgroundImage = new Image();
+backgroundImage.src = "/images/racingtrack.png";
+backgroundImage.onload = function() {
+  // Draw the image on the canvas
+  ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+}
 class createElement {
   constructor(element, x, y, w, h) {
     this.element = element;
@@ -33,25 +34,28 @@ function gameover() {
   window.location.href = "gameoverdefaultgame.html";
 }
 
-// function Boundaries(car) {
+function Boundaries() {
+  var pixelData = ctx.getImageData(car.x, car.y, 1, 1).data;
+  var pixelColor = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
+  var tolerance = 50;
+  var isSimilar = isColorSimilar(pixelColor, "rgb(209, 164, 103)", tolerance);
+  if (isSimilar){
+    console.log("COLLISION DETECTED")
+    car.x-=carspeed;
+    car.y-=carspeed;
+  }
+}
 
-//   var rightboundary = screen.width/2+200
-//   var leftboundary = screen.width/2-100;
-
-//   if (car.y < 2) {
-//     car.y = 2;
-//   }
-
-//   if (car.x + car.w < leftboundary) {
-//     car.x = leftboundary - car.w;
-//   }
-//   if (car.x + car.w > rightboundary) {
-//     car.x = rightboundary - car.w;
-//   }
-//   if (car.y + car.h > 560) {
-//     car.y = 560 - car.h;
-//   }
-// } // My partner and I wrote this
+function isColorSimilar(color1, color2, tolerance) {
+  var rgb1 = color1.match(/\d+/g);
+  var rgb2 = color2.match(/\d+/g);
+  for (var i = 0; i < 3; i++) {
+    if (Math.abs(rgb1[i] - rgb2[i]) > tolerance) {
+      return false;
+    }
+  }
+  return true;
+}
 
 function showelements() {
   setpositionelements(car);
@@ -96,32 +100,79 @@ function keyUpHandler(e) {
     spacebarPressed = false;
   }
 }
-let rotationincrement = 5;
+let rotationincrementleft = 0;
+let rotationincrementright = 0;
 function controls() {
   let carele = document.getElementById("car");
-  if (arrowUp) {
-    car.y -= carspeed;
-    cary1 -= carspeed;
+
+  var angle =   getRotation() * Math.PI / 180;
+  var dx = Math.cos(angle) * carspeed;
+  var dy = Math.sin(angle) * carspeed;
+ if (isNaN(dx)) {
+    dx = carspeed;
   }
+  if (isNaN(dy)) {
+    dy = 0;
+  }
+  if (arrowUp) {
+    car.x += dx;
+    car.y += dy;
+  }
+  
   if (arrowDown) {
-    car.y += carspeed;
-    cary1 += carspeed;
+    car.x -= dx;
+
+    car.y -= dy;
   }
   if (arrowLeft) {
-    car.x -= carspeed;
-    carx1 -= carspeed;
-    carele.style.transform = `rotate(${rotationincrement}deg)`;
-    rotationincrement--;
+    
+    carele.style.transform = `rotate(${rotationincrementleft}deg)`;
+    rotationincrementleft--;
+
   }
   if (arrowRight) {
-    car.x += carspeed;
-    carx1 += carspeed;
+
+    carele.style.transform = `rotate(${rotationincrementleft}deg)`;
+    rotationincrementleft++;
   }
-  // Boundaries(car);
+  Boundaries();
 }
-var carx = (screen.width / 2) - 50
+
+function getRotation(){
+  var el = document.getElementById("car");
+var st = window.getComputedStyle(el, null);
+var tr = st.getPropertyValue("-webkit-transform") ||
+         st.getPropertyValue("-moz-transform") ||
+         st.getPropertyValue("-ms-transform") ||
+         st.getPropertyValue("-o-transform") ||
+         st.getPropertyValue("transform") ||
+         "FAIL";
+
+// With rotate(30deg)...
+// matrix(0.866025, 0.5, -0.5, 0.866025, 0px, 0px)
+
+// rotation matrix - http://en.wikipedia.org/wiki/Rotation_matrix
+if (tr !== 'none') {
+var values = tr.split('(')[1].split(')')[0].split(',');
+var a = values[0];
+var b = values[1];
+var c = values[2];
+var d = values[3];
+
+var scale = Math.sqrt(a*a + b*b);
+
+
+// arc sin, convert from radians to degrees, round
+var sin = b/scale;
+// next line works for 30deg but not 130deg (returns 50);
+// var angle = Math.round(Math.asin(sin) * (180/Math.PI));
+var angle = Math.round(Math.atan2(b, a) * (180/Math.PI));
+
+}
+return angle;
+}
+var carx = 345;
 var cary = 425;
-console.log(carx)
 var car = new createElement('car', carx, cary, 100, 100);
 function draw() {
   controls();
