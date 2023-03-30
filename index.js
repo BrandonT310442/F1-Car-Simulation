@@ -7,9 +7,10 @@ var arrowRight = false;
 var arrowDown = false;
 var spacebarPressed = false;
 var carspeed = 1.0;
-
+let carLength = 59.165;
+let carHeight = 25.165;
 var backgroundImage = new Image();
-backgroundImage.src = "/images/racingtrack.png";
+backgroundImage.src = "/images/racingtrackred.png";
 backgroundImage.onload = function() {
   // Draw the image on the canvas
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
@@ -34,16 +35,40 @@ function gameover() {
   window.location.href = "gameoverdefaultgame.html";
 }
 
+function getDistance(x1, y1, x2, y2){
+
+var xDistance = x2 - x1; 
+var yDistance = y2 - y1; 
+
+return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
+
+}
+
 function Boundaries() {
-  var pixelData = ctx.getImageData(car.x, car.y, 1, 1).data;
-  var pixelColor = `rgb(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]})`;
-  var tolerance = 50;
-  var isSimilar = isColorSimilar(pixelColor, "rgb(209, 164, 103)", tolerance);
-  if (isSimilar){
-    console.log("COLLISION DETECTED")
-    car.x-=carspeed;
-    car.y-=carspeed;
+  // var pixelDataHigh = ctx.getImageData(car.x+carLength, car.y+carHeight, 1, 1).data;
+  // var pixelColorHigh = `rgb(${pixelDataHigh[0]}, ${pixelDataHigh[1]}, ${pixelDataHigh[2]})`;
+  // var pixelDataMid = ctx.getImageData(car.x+(carLength/2), car.y+(carHeight/2), 1, 1).data;
+  // var pixelColorMid = `rgb(${pixelDataMid[0]}, ${pixelDataMid[1]}, ${pixelDataMid[2]})`;
+  // var pixelDataLow = ctx.getImageData(car.x, car.y, 1, 1).data;
+  // var pixelColorLow = `rgb(${pixelDataLow[0]}, ${pixelDataLow[1]}, ${pixelDataLow[2]})`;
+  // console.log(pixelColorHigh)
+  // var tolerance = 50;
+  // var isSimilar = isColorSimilar(pixelColorHigh, "rgb(255, 0, 0)", tolerance);
+  // var isSimilar2 = isColorSimilar(pixelColorMid, "rgb(255, 0, 0)", tolerance);
+  // var isSimilar3 = isColorSimilar(pixelColorLow, "rgb(255, 0, 0)", tolerance);
+  // if (isSimilar || isSimilar2 || isSimilar3) {
+  //   console.log("COLLISION DETECTED")
+  //   car.x-=carspeed;
+  //   car.y-=carspeed;
+  // }
+  let centerOvalX = 458
+  let centerOvalY = 309
+  if (getDistance(car.x, car.y,centerOvalX,centerOvalY) < 107){
+    console.log("COLLISION DETECTED");
+    car.x-=getDx();
+    car.y-=getDy();
   }
+  console.log(getDistance(car.x, car.y,centerOvalX,centerOvalY))
 }
 
 function isColorSimilar(color1, color2, tolerance) {
@@ -102,12 +127,23 @@ function keyUpHandler(e) {
 }
 let rotationincrementleft = 0;
 let rotationincrementright = 0;
-function controls() {
-  let carele = document.getElementById("car");
-
+function getDx() {
   var angle =   getRotation() * Math.PI / 180;
   var dx = Math.cos(angle) * carspeed;
+  return dx;
+}
+function getDy(){
+  var angle =   getRotation() * Math.PI / 180;
   var dy = Math.sin(angle) * carspeed;
+return dy;
+}
+function controls() {
+  Boundaries();
+
+  let carele = document.getElementById("car");
+
+  var dx = getDx();
+  var dy = getDy();
  if (isNaN(dx)) {
     dx = carspeed;
   }
@@ -135,7 +171,6 @@ function controls() {
     carele.style.transform = `rotate(${rotationincrementleft}deg)`;
     rotationincrementleft++;
   }
-  Boundaries();
 }
 
 function getRotation(){
