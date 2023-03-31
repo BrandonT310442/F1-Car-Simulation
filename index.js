@@ -58,17 +58,122 @@ function Boundaries() {
   // var isSimilar3 = isColorSimilar(pixelColorLow, "rgb(255, 0, 0)", tolerance);
   // if (isSimilar || isSimilar2 || isSimilar3) {
   //   console.log("COLLISION DETECTED")
-  //   car.x-=carspeed;
-  //   car.y-=carspeed;
+  //   car.x-=getDx();
+  //   car.y-=getDy();
   // }
-  let centerOvalX = 458
-  let centerOvalY = 309
-  if (getDistance(car.x, car.y,centerOvalX,centerOvalY) < 107){
-    console.log("COLLISION DETECTED");
-    car.x-=getDx();
-    car.y-=getDy();
+
+  let dx2 = getDx();
+  let dy2 = getDy();
+  if (isNaN(dx2)) {
+    dx2 = carspeed;
   }
-  console.log(getDistance(car.x, car.y,centerOvalX,centerOvalY))
+  if (isNaN(dy2)) {
+    dy2 = 0;
+  }
+  const centerX = 460;
+  const centerY = 285;
+  ctx.fillStyle = 'red';
+
+// Draw a circle
+ctx.beginPath();
+ctx.arc(centerX, centerY, 10, 0, 2 * Math.PI);
+ctx.fill();
+  const innerRadius = 120;
+  const centerSemi2X = 612
+  ctx.beginPath();
+ctx.arc(centerSemi2X, centerY, 10, 0, 2 * Math.PI);
+ctx.fill();
+const centerSemi1X = 270
+ctx.beginPath();
+ctx.arc(centerSemi1X, centerY, 10, 0, 2 * Math.PI);
+ctx.fill();
+const centerBTX = 365
+ctx.beginPath();
+ctx.arc(centerBTX, centerY, 10, 0, 2 * Math.PI);
+ctx.fill();
+const centerBTX2 = 545
+ctx.beginPath();
+ctx.arc(centerBTX2, centerY, 10, 0, 2 * Math.PI);
+ctx.fill();
+
+  // console.log(getDistance(car.x, car.y,centerX,centerY))
+  let currRotation = getRotation();
+  console.log(getRotation())
+   if (getDistance(car.x, car.y,centerX,centerY) < innerRadius ){
+ 
+    const angle = Math.atan2(car.y - centerY, car.x - centerX);
+const forceX = Math.cos(angle) * carspeed;
+    const forceY = Math.sin(angle) * carspeed;
+    if (getRotation() > 0 && getRotation() < 90 && arrowDown == true || (getRotation() <0 && arrowDown == true)) {
+      console.log("in")
+      dx2-=forceX;
+      dy2-=forceY;
+    }else{
+    dx2 += forceX;
+    dy2 += forceY;
+    }
+    return {dx2,dy2};
+   }
+
+   if (getDistance(car.x, car.y,centerSemi1X,centerY) < innerRadius ){
+    const angle = Math.atan2(car.y - centerY, car.x - centerSemi1X);
+const forceX = Math.cos(angle) * carspeed;
+    const forceY = Math.sin(angle) * carspeed;
+   
+    dx2 += forceX;
+    dy2 += forceY;
+    
+    
+    return {dx2,dy2};
+   }
+
+   if (getDistance(car.x, car.y,centerSemi2X,centerY) < innerRadius ){
+    const angle = Math.atan2(car.y - centerY, car.x - centerSemi2X);
+const forceX = Math.cos(angle) * carspeed;
+    const forceY = Math.sin(angle) * carspeed;
+    if (getRotation() > 0 && getRotation() < 90 && arrowDown == true) {
+      dx2-=forceX;
+      dy2-=forceY;
+    }else{
+    dx2 += forceX;
+    dy2 += forceY;
+    }
+    
+    return {dx2,dy2};
+   }
+
+   if (getDistance(car.x, car.y,centerBTX,centerY) < innerRadius ){
+    const angle = Math.atan2(car.y - centerY, car.x - centerBTX);
+const forceX = Math.cos(angle) * carspeed;
+    const forceY = Math.sin(angle) * carspeed;
+    if (getRotation() > 0 && getRotation() < 90 && arrowDown == true || (getRotation() <0 && arrowDown == true)) {
+      dx2-=forceX;
+      dy2-=forceY;
+    }else{
+    dx2 += forceX;
+    dy2 += forceY;
+    }
+    
+    return {dx2,dy2};
+   }
+
+   if (getDistance(car.x, car.y,centerBTX2,centerY) < innerRadius ){
+    const angle = Math.atan2(car.y - centerY, car.x - centerBTX2);
+const forceX = Math.cos(angle) * carspeed;
+    const forceY = Math.sin(angle) * carspeed;
+    if (getRotation() > 0 && getRotation() < 90 && arrowDown == true || (getRotation() <0 && arrowDown == true)) {
+      dx2-=forceX;
+      dy2-=forceY;
+    }else{
+    dx2 += forceX;
+    dy2 += forceY;
+    }
+    
+    return {dx2,dy2};
+   }
+   return null;
+
+  // console.log(getDistance(car.x, car.y,centerOvalX,centerOvalY))
 }
 
 function isColorSimilar(color1, color2, tolerance) {
@@ -138,12 +243,19 @@ function getDy(){
 return dy;
 }
 function controls() {
-  Boundaries();
+let dx = 0;
+let dy = 0; 
 
   let carele = document.getElementById("car");
-
-  var dx = getDx();
-  var dy = getDy();
+// add if statement
+if (Boundaries() != null){
+  let {dx2, dy2} = Boundaries();
+ dx = dx2
+ dy = dy2
+}else{
+   dx = getDx();
+   dy = getDy();
+}
  if (isNaN(dx)) {
     dx = carspeed;
   }
