@@ -6,9 +6,13 @@ var arrowUp = false;
 var arrowRight = false;
 var arrowDown = false;
 var spacebarPressed = false;
-var carspeed = 1.0;
+var currVelocity = 1.0;
 let carLength = 59.165;
 let carHeight = 25.165;
+let startingVelocity = 0;
+let maxVelocity = 300;
+let acceleration = 38.46;
+let isAccelerating = false;
 var backgroundImage = new Image();
 backgroundImage.src = "/images/racingtrackred.png";
 backgroundImage.onload = function() {
@@ -65,7 +69,7 @@ function Boundaries() {
   let dx2 = getDx();
   let dy2 = getDy();
   if (isNaN(dx2)) {
-    dx2 = carspeed;
+    dx2 = currVelocity;
   }
   if (isNaN(dy2)) {
     dy2 = 0;
@@ -79,6 +83,7 @@ ctx.beginPath();
 ctx.arc(centerX, centerY, 10, 0, 2 * Math.PI);
 ctx.fill();
   const innerRadius = 120;
+
   const centerSemi2X = 612
   ctx.beginPath();
 ctx.arc(centerSemi2X, centerY, 10, 0, 2 * Math.PI);
@@ -95,16 +100,20 @@ const centerBTX2 = 545
 ctx.beginPath();
 ctx.arc(centerBTX2, centerY, 10, 0, 2 * Math.PI);
 ctx.fill();
+const centerOuter1 = 60;
+ctx.beginPath();
+ctx.arc(centerOuter1, centerY, 10, 0, 2 * Math.PI);
+ctx.fill();
 
   // console.log(getDistance(car.x, car.y,centerX,centerY))
   let currRotation = getRotation();
-  console.log(getRotation())
-   if (getDistance(car.x, car.y,centerX,centerY) < innerRadius ){
+  let yDistance = centerY-car.y;
+   if (getDistance(car.x, car.y,centerX,centerY) < innerRadius){
  
     const angle = Math.atan2(car.y - centerY, car.x - centerX);
-const forceX = Math.cos(angle) * carspeed;
-    const forceY = Math.sin(angle) * carspeed;
-    if (getRotation() > 0 && getRotation() < 90 && arrowDown == true || (getRotation() <0 && arrowDown == true)) {
+const forceX = Math.cos(angle) * currVelocity;
+    const forceY = Math.sin(angle) * currVelocity;
+    if (arrowDown) {
       console.log("in")
       dx2-=forceX;
       dy2-=forceY;
@@ -115,23 +124,84 @@ const forceX = Math.cos(angle) * carspeed;
     return {dx2,dy2};
    }
 
+  if ( Math.sqrt(Math.pow(yDistance, 2)) >=160){
+    const angle = Math.atan2(car.y - centerY, car.x - centerX);
+    const forceX = Math.cos(angle) * currVelocity;
+        const forceY = Math.sin(angle) * currVelocity;
+        if (arrowDown) {
+          dx2 += forceX;
+          dy2 += forceY;
+        }else{
+        dx2 -= forceX;
+        dy2 -= forceY;
+        }
+        return {dx2,dy2};
+  }
+
+  if (getDistance(car.x, car.y,centerSemi1X,centerY) >= 167 && car.x <300){
+    const angle = Math.atan2(car.y - centerY, car.x - centerX);
+    const forceX = Math.cos(angle) * currVelocity;
+        const forceY = Math.sin(angle) * currVelocity;
+        if (arrowDown) {
+          dx2 += forceX;
+          dy2 += forceY;
+        }else{
+        dx2 -= forceX;
+        dy2 -= forceY;
+        }
+        return {dx2,dy2};
+      }
+
+      if (getDistance(car.x, car.y,centerSemi2X,centerY) >= 167 && car.x >=670 && car.x <830){
+        const angle = Math.atan2(car.y - centerY, car.x - centerX);
+        const forceX = Math.cos(angle) * currVelocity;
+            const forceY = Math.sin(angle) * currVelocity;
+            if (arrowDown) {
+              dx2 += forceX;
+              dy2 += forceY;
+            }else{
+            dx2 -= forceX;
+            dy2 -= forceY;
+            }
+            return {dx2,dy2};
+          }
+// if (getDistance(car.x, car.y,centerOuter1,centerY) <60){
+//   const angle = Math.atan2(car.y - centerY, car.x - centerOuter1);
+//   const forceX = Math.cos(angle) * currVelocity;
+//       const forceY = Math.sin(angle) * currVelocity;
+//       if (arrowDown) {
+//         dx2 -= forceX;
+//         dy2 -= forceY;
+//       }else{
+//       dx2 += forceX;
+//       dy2 += forceY;
+//       }
+//       return {dx2,dy2};
+// }
+
+console.log(car.x)
+
+
    if (getDistance(car.x, car.y,centerSemi1X,centerY) < innerRadius ){
     const angle = Math.atan2(car.y - centerY, car.x - centerSemi1X);
-const forceX = Math.cos(angle) * carspeed;
-    const forceY = Math.sin(angle) * carspeed;
-   
+const forceX = Math.cos(angle) * currVelocity;
+    const forceY = Math.sin(angle) * currVelocity;
+    if (arrowDown) {
+      dx2 -= forceX;
+      dy2 -= forceY;
+    }else{
     dx2 += forceX;
     dy2 += forceY;
-    
+    }
     
     return {dx2,dy2};
    }
 
    if (getDistance(car.x, car.y,centerSemi2X,centerY) < innerRadius ){
     const angle = Math.atan2(car.y - centerY, car.x - centerSemi2X);
-const forceX = Math.cos(angle) * carspeed;
-    const forceY = Math.sin(angle) * carspeed;
-    if (getRotation() > 0 && getRotation() < 90 && arrowDown == true) {
+const forceX = Math.cos(angle) * currVelocity;
+    const forceY = Math.sin(angle) * currVelocity;
+    if (arrowDown) {
       dx2-=forceX;
       dy2-=forceY;
     }else{
@@ -144,9 +214,9 @@ const forceX = Math.cos(angle) * carspeed;
 
    if (getDistance(car.x, car.y,centerBTX,centerY) < innerRadius ){
     const angle = Math.atan2(car.y - centerY, car.x - centerBTX);
-const forceX = Math.cos(angle) * carspeed;
-    const forceY = Math.sin(angle) * carspeed;
-    if (getRotation() > 0 && getRotation() < 90 && arrowDown == true || (getRotation() <0 && arrowDown == true)) {
+const forceX = Math.cos(angle) * currVelocity;
+    const forceY = Math.sin(angle) * currVelocity;
+    if (arrowDown) {
       dx2-=forceX;
       dy2-=forceY;
     }else{
@@ -157,11 +227,13 @@ const forceX = Math.cos(angle) * carspeed;
     return {dx2,dy2};
    }
 
+
+
    if (getDistance(car.x, car.y,centerBTX2,centerY) < innerRadius ){
     const angle = Math.atan2(car.y - centerY, car.x - centerBTX2);
-const forceX = Math.cos(angle) * carspeed;
-    const forceY = Math.sin(angle) * carspeed;
-    if (getRotation() > 0 && getRotation() < 90 && arrowDown == true || (getRotation() <0 && arrowDown == true)) {
+const forceX = Math.cos(angle) * currVelocity;
+    const forceY = Math.sin(angle) * currVelocity;
+    if (arrowDown) {
       dx2-=forceX;
       dy2-=forceY;
     }else{
@@ -234,14 +306,28 @@ let rotationincrementleft = 0;
 let rotationincrementright = 0;
 function getDx() {
   var angle =   getRotation() * Math.PI / 180;
-  var dx = Math.cos(angle) * carspeed;
+  var dx = Math.cos(angle) * currVelocity;
   return dx;
 }
 function getDy(){
   var angle =   getRotation() * Math.PI / 180;
-  var dy = Math.sin(angle) * carspeed;
+  var dy = Math.sin(angle) * currVelocity;
 return dy;
 }
+
+function setTopSpeed(){
+ let hp = parseFloat(document.getElementById("hp").value);
+ let w = parseFloat(document.getElementById("w").value);
+ let h = parseFloat(document.getElementById("h").value);
+ let dragc = parseFloat(document.getElementById("dragc").value);
+ let p = 1.225;
+ hp = hp*745.7;
+// console.log(w + " " + h + " " + dragc + " " + p)
+//  console.log(w*h*dragc*0.5*p)
+//  console.log((hp)/(w*h*dragc*0.5*p))
+maxVelocity = Math. cbrt((hp)/(w*h*dragc*0.5*p))*3.6;
+}
+
 function controls() {
 let dx = 0;
 let dy = 0; 
@@ -257,7 +343,7 @@ if (Boundaries() != null){
    dy = getDy();
 }
  if (isNaN(dx)) {
-    dx = carspeed;
+    dx = currVelocity;
   }
   if (isNaN(dy)) {
     dy = 0;
@@ -283,7 +369,14 @@ if (Boundaries() != null){
     carele.style.transform = `rotate(${rotationincrementleft}deg)`;
     rotationincrementleft++;
   }
+
+  if (arrowUp || arrowDown || arrowLeft || arrowRight) {
+    isAccelerating = true;
+  }else{
+    isAccelerating = false;
+  }
 }
+
 
 function getRotation(){
   var el = document.getElementById("car");

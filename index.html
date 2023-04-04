@@ -14,12 +14,13 @@ top:200px;
 }
 
 
-body {
-
-    background: #0C0A0F;
+input {
+  width:250px !important;
 }
 
-
+.padding{
+  margin-right: 5px !important;
+}
 
 </style>
 </head>
@@ -31,7 +32,29 @@ body {
 <body>
 
 <img id="car" src="images/f1remove.png"/>
+<br>
+<h1 class="is-size-4">Top Speed</h1>
+<p>
+  \(P_(engine)= 1/2ρ_(air)v^3C_dA\)
+</p>
+<br>
+<div class="padding">
+<div class="columns">
+<input id="hp" type="number" class="input is-rounded" type="text" placeholder="Horsepower: 1050 hp">
+<input id="w"type="number" class="input is-rounded" type="text" placeholder="Width: 2 meters">
+</div>
+<br>
+<div class="columns">
+<input id="h"type="number" class="input is-rounded" type="text" placeholder="Height: 0.95 meters">
+<input id="dragc" type="number" class="input is-rounded" type="text" placeholder="Drag Coefficient: 0.7">
+</div>
 
+<button onclick="setTopSpeed()"class="button is-success">Submit</button>
+</div>
+</div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 <script type="text/javascript" src="index.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </body>
 </html>
