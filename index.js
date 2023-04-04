@@ -6,12 +6,12 @@ var arrowUp = false;
 var arrowRight = false;
 var arrowDown = false;
 var spacebarPressed = false;
-var currVelocity = 1.0;
+const startingVelocity = 0;
+var currVelocity = 0;
 let carLength = 59.165;
 let carHeight = 25.165;
-let startingVelocity = 0;
-let maxVelocity = 300;
-let acceleration = 38.46;
+let maxVelocity = 3;
+let acceleration = 0.01;
 let isAccelerating = false;
 var backgroundImage = new Image();
 backgroundImage.src = "/images/racingtrackred.png";
@@ -114,7 +114,6 @@ ctx.fill();
 const forceX = Math.cos(angle) * currVelocity;
     const forceY = Math.sin(angle) * currVelocity;
     if (arrowDown) {
-      console.log("in")
       dx2-=forceX;
       dy2-=forceY;
     }else{
@@ -179,7 +178,6 @@ const forceX = Math.cos(angle) * currVelocity;
 //       return {dx2,dy2};
 // }
 
-console.log(car.x)
 
 
    if (getDistance(car.x, car.y,centerSemi1X,centerY) < innerRadius ){
@@ -305,6 +303,8 @@ function keyUpHandler(e) {
 let rotationincrementleft = 0;
 let rotationincrementright = 0;
 function getDx() {
+
+ 
   var angle =   getRotation() * Math.PI / 180;
   var dx = Math.cos(angle) * currVelocity;
   return dx;
@@ -327,8 +327,15 @@ function setTopSpeed(){
 //  console.log((hp)/(w*h*dragc*0.5*p))
 maxVelocity = Math. cbrt((hp)/(w*h*dragc*0.5*p))*3.6;
 }
-
+function modifyVelo(){
+  currVelocity += acceleration;
+  if (currVelocity > maxVelocity) {
+    currVelocity = maxVelocity;
+  }
+}
 function controls() {
+  console.log(currVelocity)
+
 let dx = 0;
 let dy = 0; 
 
@@ -349,31 +356,38 @@ if (Boundaries() != null){
     dy = 0;
   }
   if (arrowUp) {
+   modifyVelo();
     car.x += dx;
     car.y += dy;
   }
   
   if (arrowDown) {
+
     car.x -= dx;
 
     car.y -= dy;
   }
   if (arrowLeft) {
-    
+    modifyVelo();
+
     carele.style.transform = `rotate(${rotationincrementleft}deg)`;
     rotationincrementleft--;
 
   }
   if (arrowRight) {
+    modifyVelo();
 
     carele.style.transform = `rotate(${rotationincrementleft}deg)`;
     rotationincrementleft++;
   }
 
-  if (arrowUp || arrowDown || arrowLeft || arrowRight) {
-    isAccelerating = true;
-  }else{
-    isAccelerating = false;
+  if (!(arrowUp || arrowDown || arrowLeft || arrowRight)) {
+    currVelocity -= acceleration;
+    if (currVelocity <= 0) {
+      currVelocity = 0;
+    }
+    car.x += dx;
+    car.y += dy;
   }
 }
 
