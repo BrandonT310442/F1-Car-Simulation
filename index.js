@@ -9,12 +9,24 @@ var spacebarPressed = false;
 const startingVelocity = 0;
 var currVelocity = 0;
 let carLength = 59.165;
+let bufferLength = 7;
 let carHeight = 25.165;
-let maxVelocity = 3;
-let acceleration = 0.01;
+let maxVelocity =  330; 
+maxVelocity = (maxVelocity/3.6)/(carLength-7) // convert to km/h divide by car length to get pixels per second
+console.log(maxVelocity)
+let time = 3.93;
+let acceleration = (maxVelocity/time)/1000; // vf = vi + at but vi = 0 so vf/t = a;
+let timeElapsed = 0;
 let isAccelerating = false;
 var backgroundImage = new Image();
 backgroundImage.src = "/images/racingtrackred.png";
+var startTime = Date.now();
+
+var interval = setInterval(function() {
+    var elapsedTime = Date.now() - startTime;
+   timeElapsed = (elapsedTime / 1000).toFixed(3);
+}, 100);
+
 backgroundImage.onload = function() {
   // Draw the image on the canvas
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
@@ -33,11 +45,7 @@ function setpositionelements(car) {
   a.style.left = car.x + 'px';
   a.style.top = car.y + 'px';
 }
-function gameover() {
-  var getscore = document.getElementById("number").innerHTML;
-  localStorage.setItem("getscore", getscore)
-  window.location.href = "gameoverdefaultgame.html";
-}
+
 
 function getDistance(x1, y1, x2, y2){
 
@@ -303,8 +311,6 @@ function keyUpHandler(e) {
 let rotationincrementleft = 0;
 let rotationincrementright = 0;
 function getDx() {
-
- 
   var angle =   getRotation() * Math.PI / 180;
   var dx = Math.cos(angle) * currVelocity;
   return dx;
@@ -326,19 +332,29 @@ function setTopSpeed(){
 //  console.log(w*h*dragc*0.5*p)
 //  console.log((hp)/(w*h*dragc*0.5*p))
 maxVelocity = Math. cbrt((hp)/(w*h*dragc*0.5*p))*3.6;
+console.log(maxVelocity)
 }
 function modifyVelo(){
+  console.log("modify")
   currVelocity += acceleration;
   if (currVelocity > maxVelocity) {
     currVelocity = maxVelocity;
   }
 }
-function controls() {
-  console.log(currVelocity)
+function slowVelo(){
+  currVelocity -= acceleration;
+  if (currVelocity <= 0) {
+    currVelocity = 0;
+  }
+}
+let intervalId;
+let intervalId2;
 
+function controls() {
+
+ console.log(currVelocity)
 let dx = 0;
 let dy = 0; 
-
   let carele = document.getElementById("car");
 // add if statement
 if (Boundaries() != null){
@@ -356,41 +372,40 @@ if (Boundaries() != null){
     dy = 0;
   }
   if (arrowUp) {
-   modifyVelo();
-    car.x += dx;
+    clearInterval(intervalId2);
+    intervalId2 = null;
+    if (!intervalId){
+      intervalId =setInterval(modifyVelo, 1);
+    }
+        car.x += dx;
     car.y += dy;
   }
   
-  if (arrowDown) {
-
-    car.x -= dx;
-
-    car.y -= dy;
-  }
   if (arrowLeft) {
-    modifyVelo();
-
+    // modifyVelo();
     carele.style.transform = `rotate(${rotationincrementleft}deg)`;
     rotationincrementleft--;
-
   }
   if (arrowRight) {
-    modifyVelo();
-
+    // modifyVelo();
     carele.style.transform = `rotate(${rotationincrementleft}deg)`;
     rotationincrementleft++;
   }
-
-  if (!(arrowUp || arrowDown || arrowLeft || arrowRight)) {
-    currVelocity -= acceleration;
-    if (currVelocity <= 0) {
-      currVelocity = 0;
-    }
-    car.x += dx;
-    car.y += dy;
-  }
+  if (!(arrowUp)) {
+    clearInterval(intervalId);
+    intervalId = null;
+    currVelocity = 0;
+//  if (!intervalId2){
+//   intervalId2 =setInterval(slowVelo, 1000);
+//  }
+//     car.x += dx;
+//     car.y += dy;
+//   }
+car.x += 0;
+car.y +=0;
 }
 
+}
 
 function getRotation(){
   var el = document.getElementById("car");
@@ -432,4 +447,4 @@ function draw() {
   controls();
   showelements();
 }
-setInterval(draw, 2); 
+setInterval(draw, 1); 
