@@ -16,13 +16,24 @@ let maxVelocity =  330;
 maxVelocity = (maxVelocity/3.6)/(carLength) // convert to km/h divide by car length to get pixels per second
 console.log(maxVelocity)
 let time = 3.5; // time to acclerate to max velocity
-let acceleration = (maxVelocity/time); // vf = vi + at but vi = 0 so vf/t = a;
+let acceleration = (maxVelocity/(time))*0.5; // vf = vi + at but vi = 0 so vf/t = a; // convert to m/0.25 s since we update the acceleration every 0.25s since if it was ever 1m/s it becomes too inaccurate
 let timeElapsed = 0;
 let isAccelerating = false;
 var backgroundImage = new Image();
 backgroundImage.src = "/images/racingtrackred.png";
 var startTime = Date.now();
- 
+window.onload = function() {
+  WebFont.load({
+    google: {
+      families: ['Montserrat']
+    },
+    active: function() {
+      // Font is now loaded and ready to use
+    }
+  });
+
+  // Your canvas code here
+};
 
 backgroundImage.onload = function() {
   // Draw the image on the canvas
@@ -379,7 +390,7 @@ if (Boundaries() != null){
     clearInterval(intervalId2);
     intervalId2 = null;
     if (!intervalId){
-      intervalId =setInterval(modifyVelo, 1000);
+      intervalId =setInterval(modifyVelo, 500);
     }
         car.x += dx;
     car.y += dy;
@@ -452,3 +463,237 @@ function draw() {
   showelements();
 }
 setInterval(draw, 1); 
+
+
+let spedometerCanvas = document.getElementById("spedometer");
+let ctx2 = spedometerCanvas.getContext("2d");
+
+var speedGradient = ctx2.createLinearGradient(0, 500, 0, 0);
+speedGradient.addColorStop(0, '#00b8fe');
+speedGradient.addColorStop(1, '#41dcf4');
+
+var rpmGradient = ctx2.createLinearGradient(0, 500, 0, 0);
+rpmGradient.addColorStop(0, '#f7b733');
+rpmGradient.addColorStop(1, '#fc4a1a');
+//rpmGradient.addColorStop(1, '#EF4836');
+
+function speedNeedle(rotation) {
+    ctx2.lineWidth = 2;
+
+    ctx2.save();
+    ctx2.translate(250, 250);
+    ctx2.rotate(rotation);
+    ctx2.strokeRect(-130 / 2 + 170, -1 / 2, 135, 1);
+    ctx2.restore();
+
+    rotation += Math.PI / 180;
+}
+
+function rpmNeedle(rotation) {
+    ctx2.lineWidth = 2;
+
+    ctx2.save();
+    ctx2.translate(250, 250);
+    ctx2.rotate(rotation);
+    ctx2.strokeRect(-130 / 2 + 170, -1 / 2, 135, 1);
+    ctx2.restore();
+
+    rotation += Math.PI / 180;
+}
+
+function drawMiniNeedle(rotation, width, speed) {
+    ctx2.lineWidth = width;
+
+    ctx2.save();
+    ctx2.translate(250, 250);
+    ctx2.rotate(rotation);
+    ctx2.strokeStyle = "#333";
+    ctx2.fillStyle = "#333";
+    ctx2.strokeRect(-20 / 2 + 220, -1 / 2, 20, 1);
+    ctx2.restore();
+
+    let x = (250 + 180 * Math.cos(rotation));
+    let y = (250 + 180 * Math.sin(rotation));
+
+    ctx2.font = "200 20px Montserrat";
+    ctx2.fillText(speed, x, y);
+
+    rotation += Math.PI / 180;
+}
+
+function calculateSpeedAngle(x, a, b) {
+    let degree = (a - b) * (x) + b;
+    let radian = (degree * Math.PI) / 180;
+    return radian <= 1.45 ? radian : 1.45;
+}
+
+function calculateRPMAngel(x, a, b) {
+    let degree = (a - b) * (x) + b;
+    let radian = (degree * Math.PI) / 180;
+    return radian >= -0.46153862656807704 ? radian : -0.46153862656807704;
+}
+
+function drawSpeedo(speed, gear, rpm, topSpeed) {
+
+    ctx2.clearRect(0, 0, 500, 500);
+
+    ctx2.beginPath();
+    ctx2.fillStyle = 'rgba(0, 0, 0, .9)';
+    ctx2.arc(250, 250, 240, 0, 2 * Math.PI);
+    ctx2.fill();
+    ctx2.save()
+    ctx2.restore();
+    ctx2.fillStyle = "#FFF";
+    ctx2.stroke();
+
+    ctx2.beginPath();
+    ctx2.strokeStyle = "#333";
+    ctx2.lineWidth = 10;
+    ctx2.arc(250, 250, 100, 0, 2 * Math.PI);
+    ctx2.stroke();
+
+    ctx2.beginPath();
+    ctx2.lineWidth = 1;
+    ctx2.arc(250, 250, 240, 0, 2 * Math.PI);
+    ctx2.stroke();
+
+    ctx2.font = "200 70px Montserrat";
+    ctx2.textAlign = "center";
+    ctx2.fillText(speed, 250, 220);
+
+    ctx2.font = "200 15px Montserrat";
+    ctx2.fillText("mph", 250, 235);
+
+    if (gear == 0 && speed > 0) {
+        ctx2.fillStyle = "#999";
+        ctx2.font = "200 70px Montserrat";
+        ctx2.fillText('R', 250, 460);
+
+        ctx2.fillStyle = "#333";
+        ctx2.font = "50px Montserrat";
+        ctx2.fillText('N', 290, 460);
+    } else if (gear == 0 && speed == 0) {
+        ctx2.fillStyle = "#999";
+        ctx2.font = "200 70px Montserrat";
+        ctx2.fillText('N', 250, 460);
+
+        ctx2.fillStyle = "#333";
+        ctx2.font = "200 50px Montserrat";
+        ctx2.fillText('R', 210, 460);
+
+        ctx2.font = "200 50px Montserrat";
+        ctx2.fillText(parseInt(gear) + 1, 290, 460);
+    } else if (gear - 1 <= 0) {
+        ctx2.fillStyle = "#999";
+        ctx2.font = "200 70px Montserrat";
+        ctx2.fillText(gear, 250, 460);
+
+        ctx2.fillStyle = "#333";
+        ctx2.font = "50px Montserrat";
+        ctx2.fillText('R', 210, 460);
+
+        ctx2.font = "200 50px Montserrat";
+        ctx2.fillText(parseInt(gear) + 1, 290, 460);
+    } else {
+        ctx2.font = "200 70px Montserrat";
+        ctx2.fillStyle = "#999";
+        ctx2.fillText(gear, 250, 460);
+
+        ctx2.font = "200 50px Montserrat";
+        ctx2.fillStyle = "#333";
+        ctx2.fillText(gear - 1, 210, 460);
+        if (parseInt(gear) + 1 < 7) {
+            ctx2.font = "200 50px Montserrat";
+            ctx2.fillText(parseInt(gear) + 1, 290, 460);
+        }
+    }
+
+    ctx2.fillStyle = "#FFF";
+    for (var i = 10; i <= Math.ceil(topSpeed / 20) * 20; i += 10) {
+        console.log();
+        drawMiniNeedle(calculateSpeedAngle(i / topSpeed, 83.07888, 34.3775) * Math.PI, i % 20 == 0 ? 3 : 1, i%20 == 0 ? i : '');
+        
+        if(i<=100) { 
+            drawMiniNeedle(calculateSpeedAngle(i / 47, 0, 22.9183) * Math.PI, i % 20 == 0 ? 3 : 1, i % 20 ==
+            0 ?
+            i / 10 : '');
+        }
+    }
+
+    ctx2.beginPath();
+    ctx2.strokeStyle = "#41dcf4";
+    ctx2.lineWidth = 25;
+    ctx2.shadowBlur = 20;
+    ctx2.shadowColor = "#00c6ff";
+
+    ctx2.strokeStyle = speedGradient;
+    ctx2.arc(250, 250, 228, .6 * Math.PI, calculateSpeedAngle(speed / topSpeed, 83.07888, 34.3775) * Math.PI);
+    ctx2.stroke();
+    ctx2.beginPath();
+    ctx2.lineWidth = 25;
+    ctx2.strokeStyle = rpmGradient;
+    ctx2.shadowBlur = 20;
+    ctx2.shadowColor = "#f7b733";
+
+    ctx2.arc(250, 250, 228, .4 * Math.PI, calculateRPMAngel(rpm / 4.7, 0, 22.9183) * Math.PI, true);
+    ctx2.stroke();
+    ctx2.shadowBlur = 0;
+
+
+    ctx2.strokeStyle = '#41dcf4';
+    speedNeedle(calculateSpeedAngle(speed / topSpeed, 83.07888, 34.3775) * Math.PI);
+
+    ctx2.strokeStyle = rpmGradient;
+    rpmNeedle(calculateRPMAngel(rpm / 4.7, 0, 22.9183) * Math.PI);
+
+    ctx2.strokeStyle = "#000";
+}
+
+
+function setSpeed () {
+
+let speedM = 0;
+let gear = 0;
+let rpm = 0;
+setInterval(function(){
+// if (speedM > 160){
+// speedM = 0;
+// rpm = 0;
+// }
+let speed =  Math.round((currVelocity*3.6*carLength)*0.621371)
+if (speed == 0){
+  gear = "N"
+}
+if (speed > 1 && speed< 30){
+gear = 1;
+rpm += .03;
+} else if (speed > 30 && speed < 50) {
+gear = 2;
+rpm += .03;
+  } else if (speed > 50 &&   speed < 70) {
+gear = 3;
+rpm += .03;
+} else if (speed > 70 &&   speed < 100)      {
+gear = 4;
+rpm += .03;
+  } else if (speed > 200)      {
+gear = 5;
+rpm += .03;
+}
+
+if (rpm < 1){
+rpm += .03; 
+}
+drawSpeedo(speed,gear,rpm,200);
+
+}, 40);
+
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  ctx2.scale(0.7,0.7);
+//setInterval(setSpeed, 2000)
+//renderCanvas();
+setSpeed();
+//drawSpeedo(120,4,.8,160);
+}, false);
