@@ -6,26 +6,23 @@ var arrowUp = false;
 var arrowRight = false;
 var arrowDown = false;
 var spacebarPressed = false;
+var elapsedTime;
 const startingVelocity = 0;
 var currVelocity = 0;
 let carLength = 59.165;
 let bufferLength = 7;
 let carHeight = 25.165;
 let maxVelocity =  330; 
-maxVelocity = (maxVelocity/3.6)/(carLength-7) // convert to km/h divide by car length to get pixels per second
+maxVelocity = (maxVelocity/3.6)/(carLength) // convert to km/h divide by car length to get pixels per second
 console.log(maxVelocity)
-let time = 3.93;
-let acceleration = (maxVelocity/time)/1000; // vf = vi + at but vi = 0 so vf/t = a;
+let time = 3.5; // time to acclerate to max velocity
+let acceleration = (maxVelocity/time); // vf = vi + at but vi = 0 so vf/t = a;
 let timeElapsed = 0;
 let isAccelerating = false;
 var backgroundImage = new Image();
 backgroundImage.src = "/images/racingtrackred.png";
 var startTime = Date.now();
-
-var interval = setInterval(function() {
-    var elapsedTime = Date.now() - startTime;
-   timeElapsed = (elapsedTime / 1000).toFixed(3);
-}, 100);
+ 
 
 backgroundImage.onload = function() {
   // Draw the image on the canvas
@@ -46,7 +43,14 @@ function setpositionelements(car) {
   a.style.top = car.y + 'px';
 }
 
-
+function countMilliseconds() {
+  var startTime = new Date().getTime(); // get the current time in milliseconds
+  setInterval(function() {
+    elapsedTime = new Date().getTime() - startTime; // calculate the elapsed time
+    
+  }, 1); // run the function every 1 millisecond
+}
+countMilliseconds();
 function getDistance(x1, y1, x2, y2){
 
 var xDistance = x2 - x1; 
@@ -335,7 +339,7 @@ maxVelocity = Math. cbrt((hp)/(w*h*dragc*0.5*p))*3.6;
 console.log(maxVelocity)
 }
 function modifyVelo(){
-  console.log("modify")
+  console.log(elapsedTime)
   currVelocity += acceleration;
   if (currVelocity > maxVelocity) {
     currVelocity = maxVelocity;
@@ -375,7 +379,7 @@ if (Boundaries() != null){
     clearInterval(intervalId2);
     intervalId2 = null;
     if (!intervalId){
-      intervalId =setInterval(modifyVelo, 1);
+      intervalId =setInterval(modifyVelo, 1000);
     }
         car.x += dx;
     car.y += dy;
