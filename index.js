@@ -16,7 +16,7 @@ let maxVelocity =  330;
 maxVelocity = (maxVelocity/3.6)/(carLength) // convert to km/h divide by car length to get pixels per second
 console.log(maxVelocity)
 let time = 3.5; // time to acclerate to max velocity
-let acceleration = (maxVelocity/(time))*0.5; // vf = vi + at but vi = 0 so vf/t = a; // convert to m/0.25 s since we update the acceleration every 0.25s since if it was ever 1m/s it becomes too inaccurate
+let acceleration = (maxVelocity/(time))*0.1; // vf = vi + at but vi = 0 so vf/t = a; // convert to m/0.25 s since we update the acceleration every 0.25s since if it was ever 1m/s it becomes too inaccurate
 let timeElapsed = 0;
 let isAccelerating = false;
 var backgroundImage = new Image();
@@ -390,7 +390,7 @@ if (Boundaries() != null){
     clearInterval(intervalId2);
     intervalId2 = null;
     if (!intervalId){
-      intervalId =setInterval(modifyVelo, 500);
+      intervalId =setInterval(modifyVelo, 100);
     }
         car.x += dx;
     car.y += dy;
@@ -654,7 +654,7 @@ function setSpeed () {
 
 let speedM = 0;
 let gear = 0;
-let rpm = 0;
+let rpm = 0
 setInterval(function(){
 // if (speedM > 160){
 // speedM = 0;
@@ -691,9 +691,23 @@ drawSpeedo(speed,gear,rpm,200);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  ctx2.scale(0.7,0.7);
+  ctx2.scale(0.65,0.65);
 //setInterval(setSpeed, 2000)
 //renderCanvas();
 setSpeed();
 //drawSpeedo(120,4,.8,160);
 }, false);
+let sideview = document.getElementById('sideview');
+let sidectx = sideview.getContext('2d');
+let sideImg = new Image();
+sideImg.src = "/images/beachbg.png";
+
+sideImg.onload = function() {
+  sidectx.drawImage(sideImg, 0, 0,sideview.width, sideview.height);
+}
+let width = (screen.width/2)+200
+document.getElementById('sideviewCar').style.left = width+"px";
+
+
+
+

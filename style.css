@@ -1,3 +1,9 @@
-canvas{
-    background-color: red;
+
+#cll{
+    height:510px !important;
+}
+
+#sideviewCar{
+    position: absolute !important;
+    
 }
