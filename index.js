@@ -12,13 +12,16 @@ var currVelocity = 0;
 let carLength = 59.165;
 let bufferLength = 7;
 let carHeight = 25.165;
+
 let maxVelocity =  330; 
-maxVelocity = (maxVelocity/3.6)/(carLength) // convert to km/h divide by car length to get pixels per second
+let prevMaxvelo = maxVelocity;
+maxVelocity = (maxVelocity/3.6)/(carLength) // convert to m/s divide by car length to get pixels per second
 console.log(maxVelocity)
 let time = 3.5; // time to acclerate to max velocity
 let acceleration = (maxVelocity/(time))*0.1; // vf = vi + at but vi = 0 so vf/t = a; // convert to m/0.25 s since we update the acceleration every 0.25s since if it was ever 1m/s it becomes too inaccurate
 let timeElapsed = 0;
 let isAccelerating = false;
+const gravity = 9.81;
 var backgroundImage = new Image();
 backgroundImage.src = "/images/racingtrackred.png";
 var startTime = Date.now();
@@ -662,7 +665,7 @@ setInterval(function(){
 // }
 let speed =  Math.round((currVelocity*3.6*carLength)*0.621371)
 if (speed == 0){
-  gear = "N"
+  gear = 0
 }
 if (speed > 1 && speed< 30){
 gear = 1;
@@ -702,12 +705,76 @@ let sidectx = sideview.getContext('2d');
 let sideImg = new Image();
 sideImg.src = "/images/beachbg.png";
 
-sideImg.onload = function() {
-  sidectx.drawImage(sideImg, 0, 0,sideview.width, sideview.height);
+let carnonA = new Image();
+carnonA.src = "/images/f1.gif";
+carnonA.onload = function() {
+  sidectx.drawImage(carnonA, 170, 220, 150, 150);
+};
+
+var width = window.innerWidth;
+var height = window.innerHeight;
+
+var stage = new Konva.Stage({
+  container: 'sideview',
+  width: width,
+  height: height,
+});
+
+var layer = new Konva.Layer();
+stage.add(layer);
+setInterval(function() {
+  if (currVelocity > 0){
+function onDrawFrame(ctx, frame) {
+  // update canvas size
+  frame.delay = 1000;
+  
+      if (currVelocity >0){
+        frame.delay = 10;
+      }
+  // update canvas that we are using for Konva.Image
+  sidectx.drawImage(frame.buffer, 170, 220,150,150);
+  // redraw the layer
+  layer.draw();
 }
-let width = (screen.width/2)+200
-document.getElementById('sideviewCar').style.left = width+"px";
+
+ var gif = gifler('/images/f1.gif').frames(sideview, onDrawFrame);
+}
+}, 500)
+// draw resulted canvas into the stage as Konva.Image
+var image = new Konva.Image({
+  image: canvas,
+
+});
 
 
+layer.add(image);
 
 
+  sidectx.drawImage(sideImg, 0, 0,sideview.width, sideview.height);
+
+  // DYNAMICS
+let mass = 780;
+let ma = 0
+let cofric = 1.7 // standard coefficient of friction for f1 tires
+let FN = mass*gravity;
+let staticFric = 0;
+let forceRizzistance = 0;
+function calcMA(){
+return ((prevMaxvelo/3.6)/time)*mass;
+}
+
+function calcFric(){
+  return FN*cofric;
+}
+
+function calcRizzistance(){
+  return ma-staticFric
+}
+setInterval(function() {
+  ma = calcMA();
+ staticFric = calcFric();
+  forceRizzistance = calcRizzistance();
+  console.log(ma)
+  console.log(staticFric)
+  console.log(forceRizzistance)
+}, 500);
