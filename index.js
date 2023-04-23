@@ -390,6 +390,7 @@ if (Boundaries() != null){
     dy = 0;
   }
   if (arrowUp) {
+    isAccelerating = true;
     clearInterval(intervalId2);
     intervalId2 = null;
     if (!intervalId){
@@ -400,11 +401,13 @@ if (Boundaries() != null){
   }
   
   if (arrowLeft) {
+        isAccelerating = true;
     // modifyVelo();
     carele.style.transform = `rotate(${rotationincrementleft}deg)`;
     rotationincrementleft--;
   }
   if (arrowRight) {
+        isAccelerating = true;
     // modifyVelo();
     carele.style.transform = `rotate(${rotationincrementleft}deg)`;
     rotationincrementleft++;
@@ -421,7 +424,9 @@ if (Boundaries() != null){
 //   }
 car.x += 0;
 car.y +=0;
+isAccelerating = false;
 }
+
 
 }
 
@@ -700,6 +705,13 @@ document.addEventListener('DOMContentLoaded', function() {
 setSpeed();
 //drawSpeedo(120,4,.8,160);
 }, false);
+  // DYNAMICS
+  let mass = 780;
+  let ma = 0
+  let cofric = 1.7 // standard coefficient of friction for f1 tires
+  let FN = mass*gravity;
+  let staticFric = 0;
+  let forceRizzistance = 0;
 let sideview = document.getElementById('sideview');
 let sidectx = sideview.getContext('2d');
 let sideImg = new Image();
@@ -733,6 +745,9 @@ function onDrawFrame(ctx, frame) {
       }
   // update canvas that we are using for Konva.Image
   sidectx.drawImage(frame.buffer, 170, 220,150,150);
+  drawForceArrows();
+
+      
   // redraw the layer
   layer.draw();
 }
@@ -752,14 +767,11 @@ layer.add(image);
 
   sidectx.drawImage(sideImg, 0, 0,sideview.width, sideview.height);
 
-  // DYNAMICS
-let mass = 780;
-let ma = 0
-let cofric = 1.7 // standard coefficient of friction for f1 tires
-let FN = mass*gravity;
-let staticFric = 0;
-let forceRizzistance = 0;
+
 function calcMA(){
+  if (!isAccelerating){
+    return 0;
+  }
 return ((prevMaxvelo/3.6)/time)*mass;
 }
 
@@ -777,4 +789,37 @@ setInterval(function() {
   console.log(ma)
   console.log(staticFric)
   console.log(forceRizzistance)
+  drawForceArrows();
+
 }, 500);
+
+
+function drawForceArrows(){
+  if (forceRizzistance >= 0) {
+    forceRizzistance = -forceRizzistance;
+  }
+  let aFriction  = drawHorizontalArrow(sidectx, 240, 300, staticFric/100, 10);
+  let aRizzistance = drawHorizontalArrow(sidectx, 240, 300, forceRizzistance/100, 10);
+}
+
+function drawHorizontalArrow(ctx, startX, startY, length, arrowSize) {
+  // Draw the line
+ ctx.strokeStyle = "red";
+ ctx.fillStyle = "red";
+  ctx.beginPath();
+  ctx.moveTo(startX, startY);
+  ctx.lineTo(startX + length, startY);
+  ctx.stroke();
+
+  // Draw the arrowhead
+  const endX = startX + length;
+  const endY = startY;
+  const angle = Math.atan2(0, length);
+  ctx.beginPath();
+  ctx.moveTo(endX, endY);
+  ctx.lineTo(endX - arrowSize * Math.cos(angle - Math.PI / 6), endY - arrowSize * Math.sin(angle - Math.PI / 6));
+  ctx.lineTo(endX - arrowSize * Math.cos(angle + Math.PI / 6), endY - arrowSize * Math.sin(angle + Math.PI / 6));
+  ctx.closePath();
+  ctx.fill();
+}
+
