@@ -30,6 +30,9 @@ input {
   <div id="cll" class="column">
 <canvas id="myCanvas" width= "906.25" height="510"></canvas>
   <br>
+  <article id="error"class="message is-danger">
+   
+  </article>
 <h1 class="is-size-4">Top Speed</h1>
 <p>
   \(P_(engine)= 1/2ρ_(air)v^3C_dA\)
@@ -46,11 +49,33 @@ input {
 <input id="dragc" type="number" class="input is-rounded" type="text" placeholder="Drag Coefficient: 0.7">
 </div>
 
+<div class="columns">
+  <input id="accel" type="number" class="input is-rounded" type="text" placeholder="Time (s) to max speed">
+  </div>
+
 <button onclick="setTopSpeed()"class="button is-success">Submit</button>
 </div>
 </div>
 <div class="column">
-  
+  <p id="ffs">
+    \(Ffs\)
+  </p>
+  <p id="ffsval"></p>
+  <p id="fr">
+    \(Fr_{t}\)
+  </p>
+  <p id="ffrval"></p>
+  <p id="fg">
+    \(Fg\)
+  </p>
+  <p id="fgval"></p>
+
+  <p id="fn">
+    \(Fn\)
+  </p>
+
+  <p id="fnval"></p>
+
   <canvas id="sideview" width="512" height="400"></canvas>
 <canvas id="spedometer" width="400" height="400"></canvas>
  

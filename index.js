@@ -13,12 +13,15 @@ let carLength = 59.165;
 let bufferLength = 7;
 let carHeight = 25.165;
 
+
 let maxVelocity =  330; 
 let prevMaxvelo = maxVelocity;
 maxVelocity = (maxVelocity/3.6)/(carLength) // convert to m/s divide by car length to get pixels per second
-console.log(maxVelocity)
+// console.log(maxVelocity)
+
 let time = 3.5; // time to acclerate to max velocity
 let acceleration = (maxVelocity/(time))*0.1; // vf = vi + at but vi = 0 so vf/t = a; // convert to m/0.25 s since we update the acceleration every 0.25s since if it was ever 1m/s it becomes too inaccurate
+let msaccel = ((prevMaxvelo/3.6)/time);
 let timeElapsed = 0;
 let isAccelerating = false;
 const gravity = 9.81;
@@ -28,7 +31,9 @@ var startTime = Date.now();
 window.onload = function() {
   WebFont.load({
     google: {
-      families: ['Montserrat']
+      families: ['Montserrat'],
+      families: ['Noto Sans Math']
+      
     },
     active: function() {
       // Font is now loaded and ready to use
@@ -294,15 +299,15 @@ function getDistance(x1, y1, x2, y2) {
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 function keyDownHandler(e) {
-  if (e.key == "ArrowRight" || e.key == "ArrowRight") {
+  if ((e.key == "ArrowRight" || e.key == "ArrowRight")) {
     arrowRight = true;
   }
-  else if (e.key == "ArrowLeft" || e.key == "ArrowLeft") {
+  else if (e.key == "ArrowLeft" || e.key == "ArrowLeft" ) {
     arrowLeft = true;
   } else if (e.key == "ArrowUp" || e.key == "ArrowUp") {
     arrowUp = true;
   }
-  else if (e.key == "ArrowDown" || e.key == "ArrowDown") {
+  else if ((e.key == "ArrowDown" || e.key == "ArrowDown")) {
     arrowDown = true;
   }
   else if (e.key == " " || e.key == "Space") {
@@ -345,15 +350,26 @@ function setTopSpeed(){
  let h = parseFloat(document.getElementById("h").value);
  let dragc = parseFloat(document.getElementById("dragc").value);
  let p = 1.225;
+
+ if (document.getElementById("accel").value != ""){
+  time = document.getElementById("accel").value
+ }
  hp = hp*745.7;
 // console.log(w + " " + h + " " + dragc + " " + p)
 //  console.log(w*h*dragc*0.5*p)
 //  console.log((hp)/(w*h*dragc*0.5*p))
 maxVelocity = Math. cbrt((hp)/(w*h*dragc*0.5*p))*3.6;
-console.log(maxVelocity)
+prevMaxvelo = maxVelocity;
+maxVelocity = (maxVelocity/3.6)/(carLength)
+ acceleration = (maxVelocity/(time))*0.1;
+ msaccel = ((prevMaxvelo/3.6)/time);
+// console.log(maxVelocity)
+
+FN = mass*gravity;
+
 }
 function modifyVelo(){
-  console.log(elapsedTime)
+  // console.log(elapsedTime)
   currVelocity += acceleration;
   if (currVelocity > maxVelocity) {
     currVelocity = maxVelocity;
@@ -370,7 +386,7 @@ let intervalId2;
 
 function controls() {
 
- console.log(currVelocity)
+//  console.log(currVelocity)
 let dx = 0;
 let dy = 0; 
   let carele = document.getElementById("car");
@@ -618,7 +634,7 @@ function drawSpeedo(speed, gear, rpm, topSpeed) {
 
     ctx2.fillStyle = "#FFF";
     for (var i = 10; i <= Math.ceil(topSpeed / 20) * 20; i += 10) {
-        console.log();
+        // console.log();
         drawMiniNeedle(calculateSpeedAngle(i / topSpeed, 83.07888, 34.3775) * Math.PI, i % 20 == 0 ? 3 : 1, i%20 == 0 ? i : '');
         
         if(i<=100) { 
@@ -706,7 +722,8 @@ setSpeed();
 //drawSpeedo(120,4,.8,160);
 }, false);
   // DYNAMICS
-  let mass = 780;
+  let mass = 20428.57142857143/msaccel;
+  console.log("Mass is " + mass + " kg")
   let ma = 0
   let cofric = 1.7 // standard coefficient of friction for f1 tires
   let FN = mass*gravity;
@@ -738,7 +755,7 @@ setInterval(function() {
   if (currVelocity > 0){
 function onDrawFrame(ctx, frame) {
   // update canvas size
-  frame.delay = 1000;
+  frame.delay = 100000000000000000000000;
   
       if (currVelocity >0){
         frame.delay = 10;
@@ -769,9 +786,10 @@ layer.add(image);
 
 
 function calcMA(){
-  if (!isAccelerating){
+  if (!isAccelerating || currVelocity == maxVelocity){
     return 0;
   }
+  
 return ((prevMaxvelo/3.6)/time)*mass;
 }
 
@@ -780,18 +798,60 @@ function calcFric(){
 }
 
 function calcRizzistance(){
-  return ma-staticFric
+  return staticFric-ma
 }
+var errorElement = document.getElementById('error');
 setInterval(function() {
+ 
   ma = calcMA();
  staticFric = calcFric();
   forceRizzistance = calcRizzistance();
-  console.log(ma)
-  console.log(staticFric)
-  console.log(forceRizzistance)
+ if (Math.abs(forceRizzistance) > staticFric){
+
+
+var existingContent = errorElement.innerHTML.trim();
+
+if (existingContent === '') {
+  errorElement.innerHTML += '<article class="message is-danger">' +
+    '<div class="message-header">' +
+    '<p>Error</p>' +
+    '<button class="delete" aria-label="delete"></button>' +
+    '</div>' +
+    '<div class="message-body">' +
+    'Please enter a greater value for time to get to max speed, which results in a slower acceleration. If the car has a slower acceleration, it means that the force required to accelerate the car is lower. Consequently, the difference between the force of static friction and the force required for acceleration (F_resistance_total) would be smaller. Therefore, in this simplified model, a slower acceleration would correspond to a lower resistance force acting on the car.' +
+    '</div>' +
+    '</article>';
+  
+    }
+setTimeout(function() {
+  errorElement.innerHTML = '';
+}, 10000); // 10 seconds = 10000 milliseconds
+
+
+  arrowUp = false;
+  arrowLeft = false;
+  arrowRight = false;
+}
+
+
+//   while (staticFric < forceRizzistance){
+//     mass+=20;
+//      FN = mass*gravity;
+//      staticFric = calcFric();
+//   forceRizzistance = calcRizzistance();
+// console.log(staticFric + "IN LOOP " + forceRizzistance)
+// if (staticFric > forceRizzistance){
+//   console.log("in loop ur stupid")
+//   return;
+// }
+//   }
+
+  console.log("MA is " +ma)
+  console.log("FFS is "+staticFric)
+  console.log("FR is " +forceRizzistance)
   drawForceArrows();
 
-}, 500);
+}, 100);
 
 
 function drawForceArrows(){
@@ -799,7 +859,75 @@ function drawForceArrows(){
     forceRizzistance = -forceRizzistance;
   }
   let aFriction  = drawHorizontalArrow(sidectx, 240, 300, staticFric/100, 10);
+ 
+  var text = document.getElementById("ffs");
+  let ffsval = document.getElementById("ffsval");
+  ffsval.innerHTML = (Math.round(staticFric) + "N").italics();  ;
+  let text2 = document.getElementById("fr");
+  let ffrval = document.getElementById("ffrval");
+  ffrval.innerHTML = (Math.abs(Math.round(forceRizzistance)) + "N").italics();  ;
+  let text3 = document.getElementById("fg");
+  let fgval = document.getElementById("fgval");
+  fgval.innerHTML = (Math.abs(Math.round(FN)) + "N").italics();  ;
+  let text4 = document.getElementById("fn");
+  let fnval = document.getElementById("fnval");
+  fnval.innerHTML = (Math.abs(Math.round(FN)) + "N").italics();  ;
+  var canvasRect = sideview.getBoundingClientRect();
+  var x = 370;
+  let x2 = 100
+  let y2 = 250
+  let x3 = 225;
+  let y3 = 360;
+  let x4 = 225;
+  let y4 = 150;
+var y = 250;
+text.style.left = (canvasRect.left + x) + "px";
+text.style.top = (canvasRect.top + y) + "px";
+ffsval.style.left = (canvasRect.left + x) + "px";
+ffsval.style.top = (canvasRect.top + y+20) + "px";
+text2.style.left = (canvasRect.left + x2) + "px";
+text2.style.top = (canvasRect.top + y2) + "px";
+ffrval.style.left = (canvasRect.left + x2) + "px";
+ffrval.style.top = (canvasRect.top+20 + y2) + "px";
+text3.style.left = (canvasRect.left + x3) + "px";
+text3.style.top = (canvasRect.top + y3) + "px";
+text4.style.left = (canvasRect.left + x4) + "px";
+text4.style.top = (canvasRect.top + y4) + "px";
+
+fgval.style.left = (canvasRect.left + x3) + "px";
+fgval.style.top = (canvasRect.top + y3+20) + "px";
+
+fnval.style.left = (canvasRect.left + x4) + "px";
+fnval.style.top = (canvasRect.top + y4+20) + "px";
   let aRizzistance = drawHorizontalArrow(sidectx, 240, 300, forceRizzistance/100, 10);
+  drawVerticalArrow(sidectx, 240, 300, FN/150, 10);
+  drawVerticalArrowUp(sidectx, 240, 300, FN/150, 10);
+}
+
+function drawVerticalArrowUp(canvas, x, y, height, arrowWidth) {
+  var ctx = canvas;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x, y - height);
+  ctx.lineTo(x - arrowWidth, y - height + arrowWidth);
+  ctx.moveTo(x, y - height);
+  ctx.lineTo(x + arrowWidth, y - height + arrowWidth);
+  ctx.stroke();
+}
+
+
+
+
+
+function drawVerticalArrow(canvas, x, y, height, arrowWidth) {
+  var ctx = canvas;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x, y + height);
+  ctx.lineTo(x - arrowWidth, y + height - arrowWidth);
+  ctx.moveTo(x, y + height);
+  ctx.lineTo(x + arrowWidth, y + height - arrowWidth);
+  ctx.stroke();
 }
 
 function drawHorizontalArrow(ctx, startX, startY, length, arrowSize) {

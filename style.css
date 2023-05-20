@@ -12,3 +12,11 @@
     background-image: url('images/beachbg2.png') !important;
   
 }
+
+#ffs, #fr, #fg, #fn,#ffsval,#ffrval, #fgval, #fnval {
+    position: absolute;
+}
+
+#fg,#fgval{
+    color:white;
+}
