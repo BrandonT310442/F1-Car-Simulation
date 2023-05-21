@@ -374,6 +374,12 @@ function modifyVelo(){
   if (currVelocity > maxVelocity) {
     currVelocity = maxVelocity;
   }
+
+  if (currVelocity < 0){
+    currVelocity = 0;
+  }
+
+ 
 }
 function slowVelo(){
   currVelocity -= acceleration;
@@ -384,67 +390,9 @@ function slowVelo(){
 let intervalId;
 let intervalId2;
 
-function controls() {
-
-//  console.log(currVelocity)
-let dx = 0;
-let dy = 0; 
-  let carele = document.getElementById("car");
-// add if statement
-if (Boundaries() != null){
-  let {dx2, dy2} = Boundaries();
- dx = dx2
- dy = dy2
-}else{
-   dx = getDx();
-   dy = getDy();
-}
- if (isNaN(dx)) {
-    dx = currVelocity;
-  }
-  if (isNaN(dy)) {
-    dy = 0;
-  }
-  if (arrowUp) {
-    isAccelerating = true;
-    clearInterval(intervalId2);
-    intervalId2 = null;
-    if (!intervalId){
-      intervalId =setInterval(modifyVelo, 100);
-    }
-        car.x += dx;
-    car.y += dy;
-  }
-  
-  if (arrowLeft) {
-        isAccelerating = true;
-    // modifyVelo();
-    carele.style.transform = `rotate(${rotationincrementleft}deg)`;
-    rotationincrementleft--;
-  }
-  if (arrowRight) {
-        isAccelerating = true;
-    // modifyVelo();
-    carele.style.transform = `rotate(${rotationincrementleft}deg)`;
-    rotationincrementleft++;
-  }
-  if (!(arrowUp)) {
-    clearInterval(intervalId);
-    intervalId = null;
-    currVelocity = 0;
-//  if (!intervalId2){
-//   intervalId2 =setInterval(slowVelo, 1000);
-//  }
-//     car.x += dx;
-//     car.y += dy;
-//   }
-car.x += 0;
-car.y +=0;
-isAccelerating = false;
-}
 
 
-}
+
 
 function getRotation(){
   var el = document.getElementById("car");
@@ -722,13 +670,14 @@ setSpeed();
 //drawSpeedo(120,4,.8,160);
 }, false);
   // DYNAMICS
-  let mass = 20428.57142857143/msaccel;
+  let mass = 780;
   console.log("Mass is " + mass + " kg")
   let ma = 0
   let cofric = 1.7 // standard coefficient of friction for f1 tires
   let FN = mass*gravity;
   let staticFric = 0;
   let forceRizzistance = 0;
+  let brakingForce = 20000;
 let sideview = document.getElementById('sideview');
 let sidectx = sideview.getContext('2d');
 let sideImg = new Image();
@@ -739,6 +688,9 @@ carnonA.src = "/images/f1.gif";
 carnonA.onload = function() {
   sidectx.drawImage(carnonA, 170, 220, 150, 150);
 };
+
+
+
 
 var width = window.innerWidth;
 var height = window.innerHeight;
@@ -852,8 +804,68 @@ setTimeout(function() {
   drawForceArrows();
 
 }, 100);
+let ma2 = staticFric-forceRizzistance-brakingForce;
+let acceleration2 = ((ma2/mass)/3.6)*0.01;
+function controls() {
 
+  //  console.log(currVelocity)
+  let dx = 0;
+  let dy = 0; 
+    let carele = document.getElementById("car");
+  // add if statement
+  if (Boundaries() != null){
+    let {dx2, dy2} = Boundaries();
+   dx = dx2
+   dy = dy2
+  }else{
+     dx = getDx();
+     dy = getDy();
+  }
+   if (isNaN(dx)) {
+      dx = currVelocity;
+    }
+    if (isNaN(dy)) {
+      dy = 0;
+    }
+    if (arrowUp) {
+          acceleration =  (maxVelocity/(time))*0.1;
 
+          car.x += dx;
+      car.y += dy;
+      isAccelerating = true;
+      clearInterval(intervalId2);
+      intervalId2 = null;
+      if (!intervalId){
+        intervalId =setInterval(modifyVelo, 100);
+      }
+    }
+   
+    if (arrowLeft) {
+          isAccelerating = true;
+      // modifyVelo();
+      carele.style.transform = `rotate(${rotationincrementleft}deg)`;
+      rotationincrementleft--;
+    }
+    if (arrowRight) {
+          isAccelerating = true;
+      // modifyVelo();
+      carele.style.transform = `rotate(${rotationincrementleft}deg)`;
+      rotationincrementleft++;
+    }
+    if (!(arrowUp) && currVelocity > 0) {
+      acceleration = acceleration2
+      car.x += dx;
+      car.y += dy;
+      isAccelerating = true;
+      clearInterval(intervalId2);
+      intervalId2 = null;
+      if (!intervalId){
+        intervalId =setInterval(modifyVelo, 100);
+      }
+  }
+  
+  
+  }
 function drawForceArrows(){
   if (forceRizzistance >= 0) {
     forceRizzistance = -forceRizzistance;
