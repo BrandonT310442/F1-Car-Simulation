@@ -13,10 +13,10 @@
   
 }
 
-#ffs, #fr, #fg, #fn,#ffsval,#ffrval, #fgval, #fnval {
+#ffs, #fr, #fg, #fn,#ffsval,#ffrval, #fgval, #fnval, #fbval, #fb{
     position: absolute;
 }
 
-#fg,#fgval{
+#fg,#fgval, #fbval, #fb{
     color:white;
 }

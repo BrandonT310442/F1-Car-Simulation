@@ -20,7 +20,7 @@ maxVelocity = (maxVelocity/3.6)/(carLength) // convert to m/s divide by car leng
 // console.log(maxVelocity)
 
 let time = 3.5; // time to acclerate to max velocity
-let acceleration = (maxVelocity/(time))*0.1; // vf = vi + at but vi = 0 so vf/t = a; // convert to m/0.25 s since we update the acceleration every 0.25s since if it was ever 1m/s it becomes too inaccurate
+let acceleration = (maxVelocity/(time))*0.1; // vf = vi + at but vi = 0 so vf/t = a; // convert to m/0.1 s since we update the acceleration every 0.25s since if it was ever 1m/s it becomes too inaccurate
 let msaccel = ((prevMaxvelo/3.6)/time);
 let timeElapsed = 0;
 let isAccelerating = false;
@@ -677,7 +677,7 @@ setSpeed();
   let FN = mass*gravity;
   let staticFric = 0;
   let forceRizzistance = 0;
-  let brakingForce = 20000;
+  let brakingForce = 10000;
 let sideview = document.getElementById('sideview');
 let sidectx = sideview.getContext('2d');
 let sideImg = new Image();
@@ -805,7 +805,7 @@ setTimeout(function() {
 
 }, 100);
 let ma2 = staticFric-forceRizzistance-brakingForce;
-let acceleration2 = ((ma2/mass)/3.6)*0.01;
+let acceleration2 = ((ma2/mass)/3.6)*0.01; 
 function controls() {
 
   //  console.log(currVelocity)
@@ -862,60 +862,100 @@ function controls() {
       if (!intervalId){
         intervalId =setInterval(modifyVelo, 100);
       }
+
   }
   
   
   }
-function drawForceArrows(){
-  if (forceRizzistance >= 0) {
-    forceRizzistance = -forceRizzistance;
+  function drawForceArrows() {
+    if (forceRizzistance >= 0) {
+      forceRizzistance = -forceRizzistance;
+    }
+    
+    let aFriction = drawHorizontalArrow(sidectx, 240, 300, staticFric/100, 10);
+    
+    var text = document.getElementById("ffs");
+    let ffsval = document.getElementById("ffsval");
+    ffsval.innerHTML = (Math.round(staticFric) + "N").italics();
+    
+    let text2 = document.getElementById("fr");
+    let ffrval = document.getElementById("ffrval");
+    ffrval.innerHTML = (Math.abs(Math.round(forceRizzistance)) + "N").italics();
+    
+    let text3 = document.getElementById("fg");
+    let fgval = document.getElementById("fgval");
+    fgval.innerHTML = (Math.abs(Math.round(FN)) + "N").italics();
+    
+    let text4 = document.getElementById("fn");
+    let fnval = document.getElementById("fnval");
+    fnval.innerHTML = (Math.abs(Math.round(FN)) + "N").italics();
+    
+    var canvasRect = sideview.getBoundingClientRect();
+    var x = 370;
+    let x2 = 100;
+    let y2 = 250;
+    let x3 = 225;
+    let y3 = 360;
+    let x4 = 225;
+    let y4 = 150;
+    var y = 250;
+    
+    let fbval = document.getElementById("fbval");
+    fbval.style.display = "none";
+    
+    text.style.position = "fixed";
+    text.style.left = (canvasRect.left + x) + "px";
+    text.style.top = (canvasRect.top + y) + "px";
+    
+    ffsval.style.position = "fixed";
+    ffsval.style.left = (canvasRect.left + x) + "px";
+    ffsval.style.top = (canvasRect.top + y + 20) + "px";
+    
+    text2.style.position = "fixed";
+    text2.style.left = (canvasRect.left + x2) + "px";
+    text2.style.top = (canvasRect.top + y2) + "px";
+    
+    ffrval.style.position = "fixed";
+    ffrval.style.left = (canvasRect.left + x2) + "px";
+    ffrval.style.top = (canvasRect.top + 20 + y2) + "px";
+    
+    text3.style.position = "fixed";
+    text3.style.left = (canvasRect.left + x3) + "px";
+    text3.style.top = (canvasRect.top + y3) + "px";
+    
+    text4.style.position = "fixed";
+    text4.style.left = (canvasRect.left + x4) + "px";
+    text4.style.top = (canvasRect.top + y4) + "px";
+    
+    fgval.style.position = "fixed";
+    fgval.style.left = (canvasRect.left + x3) + "px";
+    fgval.style.top = (canvasRect.top + y3 + 20) + "px";
+    
+    fnval.style.position = "fixed";
+    fnval.style.left = (canvasRect.left + x4) + "px";
+    fnval.style.top = (canvasRect.top + y4 + 20) + "px";
+    
+    let fb = document.getElementById("fb");
+    fb.style.left = (canvasRect.left + x2) + "px";
+    fb.style.top = (canvasRect.top + y2 + 65) + "px";
+    fb.style.display = "none";
+    
+    drawHorizontalArrow(sidectx, 240, 300, forceRizzistance/100, 10);
+    drawVerticalArrow(sidectx, 240, 300, FN/150, 10);
+    drawVerticalArrowUp(sidectx, 240, 300, FN/150, 10);
+    
+    if (!(arrowUp) && currVelocity > 0) {
+      fb.style.display = "";
+      fbval.style.display = "";
+      
+      drawHorizontalArrow(sidectx, 240, 310, -(brakingForce/100), 10);
+      
+      fbval.innerHTML = (Math.abs(Math.round(brakingForce)) + "N").italics();
+      fbval.style.left = (canvasRect.left + x2) + "px";
+      fbval.style.top = (canvasRect.top + y2 + 85) + "px";
+    }
   }
-  let aFriction  = drawHorizontalArrow(sidectx, 240, 300, staticFric/100, 10);
- 
-  var text = document.getElementById("ffs");
-  let ffsval = document.getElementById("ffsval");
-  ffsval.innerHTML = (Math.round(staticFric) + "N").italics();  ;
-  let text2 = document.getElementById("fr");
-  let ffrval = document.getElementById("ffrval");
-  ffrval.innerHTML = (Math.abs(Math.round(forceRizzistance)) + "N").italics();  ;
-  let text3 = document.getElementById("fg");
-  let fgval = document.getElementById("fgval");
-  fgval.innerHTML = (Math.abs(Math.round(FN)) + "N").italics();  ;
-  let text4 = document.getElementById("fn");
-  let fnval = document.getElementById("fnval");
-  fnval.innerHTML = (Math.abs(Math.round(FN)) + "N").italics();  ;
-  var canvasRect = sideview.getBoundingClientRect();
-  var x = 370;
-  let x2 = 100
-  let y2 = 250
-  let x3 = 225;
-  let y3 = 360;
-  let x4 = 225;
-  let y4 = 150;
-var y = 250;
-text.style.left = (canvasRect.left + x) + "px";
-text.style.top = (canvasRect.top + y) + "px";
-ffsval.style.left = (canvasRect.left + x) + "px";
-ffsval.style.top = (canvasRect.top + y+20) + "px";
-text2.style.left = (canvasRect.left + x2) + "px";
-text2.style.top = (canvasRect.top + y2) + "px";
-ffrval.style.left = (canvasRect.left + x2) + "px";
-ffrval.style.top = (canvasRect.top+20 + y2) + "px";
-text3.style.left = (canvasRect.left + x3) + "px";
-text3.style.top = (canvasRect.top + y3) + "px";
-text4.style.left = (canvasRect.left + x4) + "px";
-text4.style.top = (canvasRect.top + y4) + "px";
-
-fgval.style.left = (canvasRect.left + x3) + "px";
-fgval.style.top = (canvasRect.top + y3+20) + "px";
-
-fnval.style.left = (canvasRect.left + x4) + "px";
-fnval.style.top = (canvasRect.top + y4+20) + "px";
-  let aRizzistance = drawHorizontalArrow(sidectx, 240, 300, forceRizzistance/100, 10);
-  drawVerticalArrow(sidectx, 240, 300, FN/150, 10);
-  drawVerticalArrowUp(sidectx, 240, 300, FN/150, 10);
-}
-
+  
 function drawVerticalArrowUp(canvas, x, y, height, arrowWidth) {
   var ctx = canvas;
   ctx.beginPath();
