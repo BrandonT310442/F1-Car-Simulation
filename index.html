@@ -29,16 +29,28 @@ input {
 <div class="columns">
   <div id="cll" class="column">
 <canvas id="myCanvas" width= "906.25" height="510"></canvas>
-  <br>
+<div class="values">
+  <h1 class="is-size-4">Other Values:</h1>
+
+<p>Top Speed:</p>
+<p id="currSpeed"></p>
+<p>Acceleration:</p>
+<p id="acceleration"></p>
+<p>Coefficient of static friction:</p>
+<p id="cofric"></p>
+</div>
   <article id="error"class="message is-danger">
    
   </article>
+
 <h1 class="is-size-4">Top Speed</h1>
 <p>
   \(P_(engine)= 1/2ρ_(air)v^3C_dA\)
 </p>
 <br>
+
 <div class="padding">
+    
 <div class="columns">
 <input id="hp" type="number" class="input is-rounded" type="text" placeholder="Horsepower: 1050 hp">
 <input id="w"type="number" class="input is-rounded" type="text" placeholder="Width: 2 meters">
@@ -55,7 +67,13 @@ input {
 
 <button onclick="setTopSpeed()"class="button is-success">Submit</button>
 </div>
+ <br>
+<h1 class="is-size-4">Braking Force</h1>
+<input id="brakingForce"type="number" class="input is-rounded" type="text" placeholder="Ex. 10000N">
+<button onclick="getBrakingForce()"class="button is-success">Submit</button>
+
 </div>
+
 <div class="column">
   <p id="ffs">
     \(Ffs\)
@@ -87,15 +105,30 @@ input {
 <div id="space"></div>
 <body>
 
-<img id="car" src="images/f1remove.png"/>
+<img id="car" src="images/f1remove2.png"/>
 </div>
+</div>
+
+<div class="is-pulled-right">
+<h1 class="is-size-4">Velocity Time Graph</h1>
+</div>
+<br>
+<br>
+<div class="is-pulled-right">
+
+  <canvas id="myChart" style="width: 100%; max-width: 700px; height: 400px;"></canvas>
 </div>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script type="text/javascript" src="index.js"></script>
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+<script>
 
+</script>
 <link rel="stylesheet" href="style.css">
 </body>
 </html>

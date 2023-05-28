@@ -13,13 +13,15 @@ let carLength = 59.165;
 let bufferLength = 7;
 let carHeight = 25.165;
 
+let isKeyed = true;
 
-let maxVelocity =  330; 
+let maxVelocity =  330; // in km/h
 let prevMaxvelo = maxVelocity;
 maxVelocity = (maxVelocity/3.6)/(carLength) // convert to m/s divide by car length to get pixels per second
 // console.log(maxVelocity)
 
 let time = 3.5; // time to acclerate to max velocity
+
 let acceleration = (maxVelocity/(time))*0.1; // vf = vi + at but vi = 0 so vf/t = a; // convert to m/0.1 s since we update the acceleration every 0.25s since if it was ever 1m/s it becomes too inaccurate
 let msaccel = ((prevMaxvelo/3.6)/time);
 let timeElapsed = 0;
@@ -28,6 +30,16 @@ const gravity = 9.81;
 var backgroundImage = new Image();
 backgroundImage.src = "/images/racingtrackred.png";
 var startTime = Date.now();
+
+
+
+//  Update Values Below
+setInterval(function() {
+  document.getElementById("currSpeed").innerHTML = (Math.round((maxVelocity)*3.6*carLength*0.621371)) + " mph";
+  document.getElementById("acceleration").innerHTML = (Math.round((maxVelocity/time)/0.1)) + " m/s^2";
+  document.getElementById("cofric").innerHTML = cofric;
+}, 100); // run the function every 100 millisecond
+
 window.onload = function() {
   WebFont.load({
     google: {
@@ -345,6 +357,8 @@ return dy;
 }
 
 function setTopSpeed(){
+  isEnter2 = false;
+  isKeyed = true;
  let hp = parseFloat(document.getElementById("hp").value);
  let w = parseFloat(document.getElementById("w").value);
  let h = parseFloat(document.getElementById("h").value);
@@ -363,7 +377,8 @@ prevMaxvelo = maxVelocity;
 maxVelocity = (maxVelocity/3.6)/(carLength)
  acceleration = (maxVelocity/(time))*0.1;
  msaccel = ((prevMaxvelo/3.6)/time);
-// console.log(maxVelocity)
+ console.log("prev max"+prevMaxvelo)
+ console.log("New max "+maxVelocity)
 
 FN = mass*gravity;
 
@@ -377,6 +392,7 @@ function modifyVelo(){
 
   if (currVelocity < 0){
     currVelocity = 0;
+    isAccelerating = false;
   }
 
  
@@ -671,13 +687,13 @@ setSpeed();
 }, false);
   // DYNAMICS
   let mass = 780;
-  console.log("Mass is " + mass + " kg")
+  // console.log("Mass is " + mass + " kg")
   let ma = 0
   let cofric = 1.7 // standard coefficient of friction for f1 tires
   let FN = mass*gravity;
   let staticFric = 0;
   let forceRizzistance = 0;
-  let brakingForce = 10000;
+  let brakingForce = 20000;
 let sideview = document.getElementById('sideview');
 let sidectx = sideview.getContext('2d');
 let sideImg = new Image();
@@ -752,6 +768,8 @@ function calcFric(){
 function calcRizzistance(){
   return staticFric-ma
 }
+
+let isEnter2 = false;
 var errorElement = document.getElementById('error');
 setInterval(function() {
  
@@ -759,11 +777,11 @@ setInterval(function() {
  staticFric = calcFric();
   forceRizzistance = calcRizzistance();
  if (Math.abs(forceRizzistance) > staticFric){
-
+isKeyed = false;
 
 var existingContent = errorElement.innerHTML.trim();
 
-if (existingContent === '') {
+if (existingContent === '' && !isEnter2) {
   errorElement.innerHTML += '<article class="message is-danger">' +
     '<div class="message-header">' +
     '<p>Error</p>' +
@@ -777,12 +795,11 @@ if (existingContent === '') {
     }
 setTimeout(function() {
   errorElement.innerHTML = '';
+  isEnter2 = true;
 }, 10000); // 10 seconds = 10000 milliseconds
 
 
-  arrowUp = false;
-  arrowLeft = false;
-  arrowRight = false;
+  
 }
 
 
@@ -798,16 +815,47 @@ setTimeout(function() {
 // }
 //   }
 
-  console.log("MA is " +ma)
-  console.log("FFS is "+staticFric)
-  console.log("FR is " +forceRizzistance)
+  // console.log("MA is " +ma)
+  // console.log("FFS is "+staticFric)
+  // console.log("FR is " +forceRizzistance)
   drawForceArrows();
 
 }, 100);
 let ma2 = staticFric-forceRizzistance-brakingForce;
-let acceleration2 = ((ma2/mass)/3.6)*0.01; 
-function controls() {
+let acceleration2 = ((ma2/mass)/3.6)*0.1; // convert acceleration back
+console.log(ma2)
 
+console.log(acceleration2)
+let isEntered = false;
+function controls() {
+  ma2 = staticFric-Math.abs(forceRizzistance)-brakingForce;
+ acceleration2 = ((ma2/mass)/3.6)*0.01; 
+ if (brakingForce+ Math.abs(forceRizzistance) < staticFric ){
+  isKeyed = false;
+  var existingContent = errorElement.innerHTML.trim();
+  
+  if (existingContent === '' && !isEntered) {
+    errorElement.innerHTML += '<article class="message is-danger">' +
+      '<div class="message-header">' +
+      '<p>Error</p>' +
+      '<button class="delete" aria-label="delete"></button>' +
+      '</div>' +
+      '<div class="message-body">' +
+      'Please enter a greater value for the magnitude of the resistance force so that it can decelerate the car' +
+      '</div>' +
+      '</article>';
+    isEntered = true;
+      }
+  setTimeout(function() {
+    errorElement.innerHTML = '';
+  }, 10000); // 10 seconds = 10000 milliseconds
+  
+  
+    arrowUp = false;
+    arrowLeft = false;
+    arrowRight = false;
+  }
+  
   //  console.log(currVelocity)
   let dx = 0;
   let dy = 0; 
@@ -827,7 +875,7 @@ function controls() {
     if (isNaN(dy)) {
       dy = 0;
     }
-    if (arrowUp) {
+    if (arrowUp && isKeyed) {
           acceleration =  (maxVelocity/(time))*0.1;
 
           car.x += dx;
@@ -840,19 +888,19 @@ function controls() {
       }
     }
    
-    if (arrowLeft) {
+    if (arrowLeft && isKeyed) {
           isAccelerating = true;
       // modifyVelo();
       carele.style.transform = `rotate(${rotationincrementleft}deg)`;
       rotationincrementleft--;
     }
-    if (arrowRight) {
+    if (arrowRight && isKeyed) {
           isAccelerating = true;
       // modifyVelo();
       carele.style.transform = `rotate(${rotationincrementleft}deg)`;
       rotationincrementleft++;
     }
-    if (!(arrowUp) && currVelocity > 0) {
+    if (!(arrowUp) && currVelocity > 0 && isKeyed) {
       acceleration = acceleration2
       car.x += dx;
       car.y += dy;
@@ -872,15 +920,8 @@ function controls() {
       forceRizzistance = -forceRizzistance;
     }
     
-    let aFriction = drawHorizontalArrow(sidectx, 240, 300, staticFric/100, 10);
     
-    var text = document.getElementById("ffs");
-    let ffsval = document.getElementById("ffsval");
-    ffsval.innerHTML = (Math.round(staticFric) + "N").italics();
-    
-    let text2 = document.getElementById("fr");
-    let ffrval = document.getElementById("ffrval");
-    ffrval.innerHTML = (Math.abs(Math.round(forceRizzistance)) + "N").italics();
+  
     
     let text3 = document.getElementById("fg");
     let fgval = document.getElementById("fgval");
@@ -903,22 +944,7 @@ function controls() {
     let fbval = document.getElementById("fbval");
     fbval.style.display = "none";
     
-    text.style.position = "fixed";
-    text.style.left = (canvasRect.left + x) + "px";
-    text.style.top = (canvasRect.top + y) + "px";
-    
-    ffsval.style.position = "fixed";
-    ffsval.style.left = (canvasRect.left + x) + "px";
-    ffsval.style.top = (canvasRect.top + y + 20) + "px";
-    
-    text2.style.position = "fixed";
-    text2.style.left = (canvasRect.left + x2) + "px";
-    text2.style.top = (canvasRect.top + y2) + "px";
-    
-    ffrval.style.position = "fixed";
-    ffrval.style.left = (canvasRect.left + x2) + "px";
-    ffrval.style.top = (canvasRect.top + 20 + y2) + "px";
-    
+   
     text3.style.position = "fixed";
     text3.style.left = (canvasRect.left + x3) + "px";
     text3.style.top = (canvasRect.top + y3) + "px";
@@ -939,8 +965,39 @@ function controls() {
     fb.style.left = (canvasRect.left + x2) + "px";
     fb.style.top = (canvasRect.top + y2 + 65) + "px";
     fb.style.display = "none";
+    var text = document.getElementById("ffs");
+    let ffsval = document.getElementById("ffsval");
     
-    drawHorizontalArrow(sidectx, 240, 300, forceRizzistance/100, 10);
+    let text2 = document.getElementById("fr");
+    let ffrval = document.getElementById("ffrval");
+    if (isAccelerating){
+      text.style.display="";
+      ffsval.style.display="";
+      text2.style.display="";
+      ffrval.style.display="";
+      ffsval.innerHTML = (Math.round(staticFric) + "N").italics();
+      
+      ffrval.innerHTML = (Math.abs(Math.round(forceRizzistance)) + "N").italics();
+      text.style.left = (canvasRect.left + x) + "px";
+      text.style.top = (canvasRect.top + y) + "px";
+      
+      ffsval.style.left = (canvasRect.left + x) + "px";
+      ffsval.style.top = (canvasRect.top + y + 20) + "px";
+      
+      text2.style.left = (canvasRect.left + x2) + "px";
+      text2.style.top = (canvasRect.top + y2) + "px";
+      
+      ffrval.style.left = (canvasRect.left + x2) + "px";
+      ffrval.style.top = (canvasRect.top + 20 + y2) + "px";
+      
+      drawHorizontalArrow(sidectx, 240, 300, forceRizzistance/100, 10);
+      drawHorizontalArrow(sidectx, 240, 300, staticFric/100, 10);
+    }else{
+      text.style.display="none";
+      ffsval.style.display="none";
+      text2.style.display="none";
+      ffrval.style.display="none";
+    }
     drawVerticalArrow(sidectx, 240, 300, FN/150, 10);
     drawVerticalArrowUp(sidectx, 240, 300, FN/150, 10);
     
@@ -1003,3 +1060,71 @@ function drawHorizontalArrow(ctx, startX, startY, length, arrowSize) {
   ctx.fill();
 }
 
+function getBrakingForce(){
+  brakingForce = parseInt(document.getElementById("brakingForce").value);
+   isEntered = false;
+   isKeyed = true;
+
+}
+
+function setBrakingForce(){
+  ma2 = staticFric-Math.abs(forceRizzistance)-brakingForce;
+ acceleration2 = ((ma2/mass)/3.6)*0.01; 
+ 
+  
+ }
+
+ var vVals = [];
+ var ctx3 = document.getElementById("myChart").getContext("2d");
+ // Initialize the line chart
+ var chart = new Chart(ctx3, {
+   type: 'line',
+   data: {
+     labels: [],
+     datasets: [{
+       label: 'Velocity',
+       data: [],
+       borderColor: 'blue',
+       fill: false
+     }]
+   },
+   options: {
+     responsive: true,
+     animation: false,
+     scales: {
+       x: {
+         display: true,
+         title: {
+           display: true,
+           text: 'Time (s)'
+         }
+       },
+       y: {
+         display: true,
+         title: {
+           display: true,
+           text: 'Velocity'
+         }
+       }
+     }
+   }
+ });
+
+ function getVeloVals() {
+   vVals.push(currVelocity*3.6*carLength*0.621371);
+
+   // Update the chart data
+   chart.data.labels.push(vVals.length); // Assuming time starts at 1 second and increments by 1 second
+   chart.data.datasets[0].data.push(currVelocity*3.6*carLength*0.621371);
+
+   // Update the chart
+   chart.update();
+ }
+
+ // Example usage
+ setInterval(function() {
+   getVeloVals();
+ }, 1000); // Update the chart every second with a random velocity value
+ 
+
+ 
