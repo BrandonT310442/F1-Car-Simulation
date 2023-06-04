@@ -1,4 +1,4 @@
-**F1 Car Physics Simulation
+# F1 Car Physics Simulation
 This repository contains a physics simulation of an F1 car, including calculations for dynamics and kinematics. The simulation allows the user to control the car using arrow keys, and provides real-time calculations of velocity, acceleration, and other kinematic parameters. The simulation also includes calculations for various forces acting on the car, such as friction and aerodynamic drag. Additionally, there is a velocity-time graph that provides a visual representation of the car's speed over time.
 
 ##Features
