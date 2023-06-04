@@ -15,7 +15,7 @@ To use the F1 car physics simulation, follow these steps:
 Clone the repository to your local machine using the following command:
 shell
 Copy code
-git clone https://github.com/BrandonT310442/Phyics-ISP/new/main?readme=1
+git clone https://github.com/BrandonT310442/F1-Car-Simulation
 Open the repository in your preferred programming environment.
 
 Navigate to the main simulation file, index.html, and run the file.
