@@ -17,7 +17,7 @@ shell
 Copy code
 git clone https://github.com/BrandonT310442/F1-Car-Simulation
 Open the repository in your preferred programming environment.
-
+Or visit the following website: https://brandont310442.github.io/F1-Car-Simulation/
 Navigate to the main simulation file, index.html, and run the file.
 
 Once the simulation starts, you can control the car using the arrow keys. Press the up arrow to accelerate, the down arrow to brake, and the left/right arrows to steer.
