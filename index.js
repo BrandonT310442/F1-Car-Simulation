@@ -63,6 +63,7 @@ backgroundImage.onload = function() {
   // Draw the image on the canvas
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
 }
+// creates a class that creates an element
 class createElement {
   constructor(element, x, y, w, h) {
     this.element = element;
@@ -72,6 +73,7 @@ class createElement {
     this.h = h;
   }
 }
+// sets position of car
 function setpositionelements(car) {
   var a = document.getElementById(car.element);
   a.style.left = car.x + 'px';
@@ -86,6 +88,7 @@ function countMilliseconds() {
   }, 1); // run the function every 1 millisecond
 }
 countMilliseconds();
+// get distance function between 2 objects, used for collision detection
 function getDistance(x1, y1, x2, y2){
 
 var xDistance = x2 - x1; 
@@ -94,7 +97,7 @@ var yDistance = y2 - y1;
 return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
 
 }
-
+// set boundaries to prevent car from going into water and off track
 function Boundaries() {
   // var pixelDataHigh = ctx.getImageData(car.x+carLength, car.y+carHeight, 1, 1).data;
   // var pixelColorHigh = `rgb(${pixelDataHigh[0]}, ${pixelDataHigh[1]}, ${pixelDataHigh[2]})`;
@@ -292,7 +295,7 @@ const forceX = Math.cos(angle) * currVelocity;
 
   // console.log(getDistance(car.x, car.y,centerOvalX,centerOvalY))
 }
-
+// check if colours are the same used for collision detect
 function isColorSimilar(color1, color2, tolerance) {
   var rgb1 = color1.match(/\d+/g);
   var rgb2 = color2.match(/\d+/g);
@@ -303,15 +306,17 @@ function isColorSimilar(color1, color2, tolerance) {
   }
   return true;
 }
-
+// show the car element
 function showelements() {
   setpositionelements(car);
 }
+// get distance between two points
 function getDistance(x1, y1, x2, y2) {
   var xDistance = x2 - x1;
   var yDistance = y2 - y1;
   return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
 }
+// arrow key event handlers used for control of car
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 function keyDownHandler(e) {
@@ -347,6 +352,7 @@ function keyUpHandler(e) {
     spacebarPressed = false;
   }
 }
+// get dx and dy for rotation of car
 let rotationincrementleft = 0;
 let rotationincrementright = 0;
 function getDx() {
@@ -359,7 +365,7 @@ function getDy(){
   var dy = Math.sin(angle) * currVelocity;
 return dy;
 }
-
+// set top speed from input boxes
 function setTopSpeed(){
   isEnter2 = false;
   isKeyed = true;
@@ -392,6 +398,7 @@ maxVelocity = (maxVelocity/3.6)/(carLength)
 FN = mass*gravity;
 
 }
+// modify velocity with acceleration
 function modifyVelo(){
   // console.log(elapsedTime)
   currVelocity += acceleration;
@@ -406,6 +413,8 @@ function modifyVelo(){
 
  
 }
+
+// slow down the velocity if brakind force applied
 function slowVelo(){
   currVelocity -= acceleration;
   if (currVelocity <= 0) {
@@ -418,7 +427,7 @@ let intervalId2;
 
 
 
-
+// get rotation of car
 function getRotation(){
   var el = document.getElementById("car");
 var st = window.getComputedStyle(el, null);
@@ -455,13 +464,14 @@ return angle;
 var carx = 345;
 var cary = 425;
 var car = new createElement('car', carx, cary, 100, 100);
+// run the simulation
 function draw() {
   controls();
   showelements();
 }
 setInterval(draw, 1); 
 
-
+// EVERYTHING BELOW IS FOR THE SPEDOMETER (RPM IS NOT ACCURATE JUST FOR VISUAL)
 let spedometerCanvas = document.getElementById("spedometer");
 let ctx2 = spedometerCanvas.getContext("2d");
 
@@ -646,7 +656,7 @@ function drawSpeedo(speed, gear, rpm, topSpeed) {
     ctx2.strokeStyle = "#000";
 }
 
-
+// set speed of spedometer
 function setSpeed () {
 
 let speedM = 0;
@@ -715,7 +725,7 @@ carnonA.onload = function() {
 };
 
 
-
+// use a gif for the 2nd canvas
 
 var width = window.innerWidth;
 var height = window.innerHeight;
@@ -760,7 +770,7 @@ layer.add(image);
 
 
   sidectx.drawImage(sideImg, 0, 0,sideview.width, sideview.height);
-
+// calculate the various dynamics and kinematics forces
 
 function calcMA(){
   if (!isAccelerating || currVelocity == maxVelocity){
@@ -785,6 +795,7 @@ setInterval(function() {
   ma = calcMA();
  staticFric = calcFric();
   forceRizzistance = calcRizzistance();
+  // check if the force of static friction is greater than the force required for acceleration if not then throw an error
  if (Math.abs(forceRizzistance) > staticFric){
 isKeyed = false;
 maxVelocity = 0;
@@ -830,6 +841,8 @@ setTimeout(function() {
   drawForceArrows();
 
 }, 100);
+
+// calculate for braking
 let ma2 = staticFric-forceRizzistance-brakingForce;
 let acceleration2 = ((ma2/mass)/3.6)*0.1; // convert acceleration back
 console.log(ma2)
@@ -926,13 +939,15 @@ function controls() {
   
   
   }
+
+  // draw arrows for forces
   function drawForceArrows() {
     if (forceRizzistance >= 0) {
       forceRizzistance = -forceRizzistance;
     }
     
     
-  
+  // add the text for the forces on the 2nd canvas
     
     let text3 = document.getElementById("fg");
     let fgval = document.getElementById("fgval");
@@ -1024,6 +1039,7 @@ function controls() {
     }
   }
   
+  // draw arrows for vectors on 2nd canvas
 function drawVerticalArrowUp(canvas, x, y, height, arrowWidth) {
   var ctx = canvas;
   ctx.beginPath();
@@ -1070,7 +1086,7 @@ function drawHorizontalArrow(ctx, startX, startY, length, arrowSize) {
   ctx.closePath();
   ctx.fill();
 }
-
+// get braking force
 function getBrakingForce(){
  let  brakingForce2 = parseInt(document.getElementById("brakingForce").value);
   if (isNaN(brakingForce2)) {
@@ -1082,7 +1098,7 @@ function getBrakingForce(){
    isKeyed = true;
 
 }
-
+// set braking force
 function setBrakingForce(){
   ma2 = staticFric-Math.abs(forceRizzistance)-brakingForce;
  acceleration2 = ((ma2/mass)/3.6)*0.01; 
@@ -1090,6 +1106,7 @@ function setBrakingForce(){
   
  }
 
+//  CHART JS BELOW
  var vVals = [];
  var ctx3 = document.getElementById("myChart").getContext("2d");
  // Initialize the line chart
