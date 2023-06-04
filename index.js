@@ -20,7 +20,7 @@ let prevMaxvelo = maxVelocity;
 maxVelocity = (maxVelocity/3.6)/(carLength) // convert to m/s divide by car length to get pixels per second
 // console.log(maxVelocity)
 
-let time = 3.5; // time to acclerate to max velocity
+let time = 7; // time to acclerate to max velocity
 
 let acceleration = (maxVelocity/(time))*0.1; // vf = vi + at but vi = 0 so vf/t = a; // convert to m/0.1 s since we update the acceleration every 0.25s since if it was ever 1m/s it becomes too inaccurate
 let msaccel = ((prevMaxvelo/3.6)/time);
@@ -28,15 +28,19 @@ let timeElapsed = 0;
 let isAccelerating = false;
 const gravity = 9.81;
 var backgroundImage = new Image();
-backgroundImage.src = "/images/racingtrackred.png";
+backgroundImage.src = "/images/racingtrack.png";
 var startTime = Date.now();
 
-
-
+// prevents arrow down scrolling
+window.addEventListener("keydown", function(e) {
+  if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+      e.preventDefault();
+  }
+}, false);
 //  Update Values Below
 setInterval(function() {
   document.getElementById("currSpeed").innerHTML = (Math.round((maxVelocity)*3.6*carLength*0.621371)) + " mph";
-  document.getElementById("acceleration").innerHTML = (Math.round((maxVelocity/time)/0.1)) + " m/s^2";
+  document.getElementById("acceleration").innerHTML = (Math.round(((prevMaxvelo/3.6)/time))) + " m/s^2";
   document.getElementById("cofric").innerHTML = cofric;
 }, 100); // run the function every 100 millisecond
 
@@ -124,29 +128,29 @@ function Boundaries() {
 // Draw a circle
 ctx.beginPath();
 ctx.arc(centerX, centerY, 10, 0, 2 * Math.PI);
-ctx.fill();
+// ctx.fill();
   const innerRadius = 120;
 
   const centerSemi2X = 612
   ctx.beginPath();
 ctx.arc(centerSemi2X, centerY, 10, 0, 2 * Math.PI);
-ctx.fill();
+// ctx.fill();
 const centerSemi1X = 270
 ctx.beginPath();
 ctx.arc(centerSemi1X, centerY, 10, 0, 2 * Math.PI);
-ctx.fill();
+// ctx.fill();
 const centerBTX = 365
 ctx.beginPath();
 ctx.arc(centerBTX, centerY, 10, 0, 2 * Math.PI);
-ctx.fill();
+// ctx.fill();
 const centerBTX2 = 545
 ctx.beginPath();
 ctx.arc(centerBTX2, centerY, 10, 0, 2 * Math.PI);
-ctx.fill();
+// ctx.fill();
 const centerOuter1 = 60;
 ctx.beginPath();
 ctx.arc(centerOuter1, centerY, 10, 0, 2 * Math.PI);
-ctx.fill();
+// ctx.fill();
 
   // console.log(getDistance(car.x, car.y,centerX,centerY))
   let currRotation = getRotation();
@@ -320,7 +324,7 @@ function keyDownHandler(e) {
     arrowUp = true;
   }
   else if ((e.key == "ArrowDown" || e.key == "ArrowDown")) {
-    arrowDown = true;
+    // arrowDown = true;
   }
   else if (e.key == " " || e.key == "Space") {
     spacebarPressed = true;
@@ -363,6 +367,11 @@ function setTopSpeed(){
  let w = parseFloat(document.getElementById("w").value);
  let h = parseFloat(document.getElementById("h").value);
  let dragc = parseFloat(document.getElementById("dragc").value);
+console.log(hp)
+ if (isNaN(hp)|| isNaN(w) || isNaN(h) || isNaN(dragc)){
+  alert("Please fill all the fields");
+  return;
+ }
  let p = 1.225;
 
  if (document.getElementById("accel").value != ""){
@@ -757,7 +766,7 @@ function calcMA(){
   if (!isAccelerating || currVelocity == maxVelocity){
     return 0;
   }
-  
+  console.log("prevMaxvelo is " + prevMaxvelo)
 return ((prevMaxvelo/3.6)/time)*mass;
 }
 
@@ -778,7 +787,7 @@ setInterval(function() {
   forceRizzistance = calcRizzistance();
  if (Math.abs(forceRizzistance) > staticFric){
 isKeyed = false;
-
+maxVelocity = 0;
 var existingContent = errorElement.innerHTML.trim();
 
 if (existingContent === '' && !isEnter2) {
@@ -832,6 +841,8 @@ function controls() {
  acceleration2 = ((ma2/mass)/3.6)*0.01; 
  if (brakingForce+ Math.abs(forceRizzistance) < staticFric ){
   isKeyed = false;
+  maxVelocity = 0;
+
   var existingContent = errorElement.innerHTML.trim();
   
   if (existingContent === '' && !isEntered) {
@@ -841,7 +852,7 @@ function controls() {
       '<button class="delete" aria-label="delete"></button>' +
       '</div>' +
       '<div class="message-body">' +
-      'Please enter a greater value for the magnitude of the resistance force so that it can decelerate the car' +
+      'Please enter a greater value for the magnitude of the braking force so that it can decelerate the car' +
       '</div>' +
       '</article>';
     isEntered = true;
@@ -1061,7 +1072,12 @@ function drawHorizontalArrow(ctx, startX, startY, length, arrowSize) {
 }
 
 function getBrakingForce(){
-  brakingForce = parseInt(document.getElementById("brakingForce").value);
+ let  brakingForce2 = parseInt(document.getElementById("brakingForce").value);
+  if (isNaN(brakingForce2)) {
+  alert("Please enter a number");
+  return;
+  }
+  brakingForce = brakingForce2
    isEntered = false;
    isKeyed = true;
 
@@ -1103,7 +1119,7 @@ function setBrakingForce(){
          display: true,
          title: {
            display: true,
-           text: 'Velocity'
+           text: 'Velocity (mph)'
          }
        }
      }
