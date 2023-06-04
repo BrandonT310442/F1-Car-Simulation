@@ -716,7 +716,7 @@ setSpeed();
 let sideview = document.getElementById('sideview');
 let sidectx = sideview.getContext('2d');
 let sideImg = new Image();
-sideImg.src = "images/beachbg.png";
+sideImg.src = "images/beachbg2.png";
 
 let carnonA = new Image();
 carnonA.src = "images/f1.gif";
