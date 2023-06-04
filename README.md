@@ -1,7 +1,7 @@
 # F1 Car Physics Simulation
 This repository contains a physics simulation of an F1 car, including calculations for dynamics and kinematics. The simulation allows the user to control the car using arrow keys, and provides real-time calculations of velocity, acceleration, and other kinematic parameters. The simulation also includes calculations for various forces acting on the car, such as friction and aerodynamic drag. Additionally, there is a velocity-time graph that provides a visual representation of the car's speed over time.
 
-##Features
+## Features
 Real-time physics simulation of an F1 car.
 User-friendly interface using arrow keys to control the car's movement.
 Calculations for velocity, acceleration, and other kinematic parameters.
@@ -9,7 +9,7 @@ Calculation of various forces acting on the car, including friction and aerodyna
 Customizable settings for top speed and braking force.
 Velocity-time graph for visualizing the car's speed over time.
 
-##Usage
+## Usage
 To use the F1 car physics simulation, follow these steps:
 
 Clone the repository to your local machine using the following command:
@@ -32,7 +32,7 @@ To view the velocity-time graph, you can access the graph window within the simu
 
 Or visit the website 
 
-##Acknowledgements
+## Acknowledgements
 The F1 car physics simulation is based on the principles of classical mechanics and kinematics.
 The velocity-time graph visualization utilizes the Chart.js library.
 The project was inspired by a passion for Formula 1 racing and the desire to explore the physics behind it.
