@@ -28,7 +28,7 @@ let timeElapsed = 0;
 let isAccelerating = false;
 const gravity = 9.81;
 var backgroundImage = new Image();
-backgroundImage.src = "/images/racingtrack.png";
+backgroundImage.src = "images/racingtrack.png";
 var startTime = Date.now();
 
 // prevents arrow down scrolling
@@ -716,10 +716,10 @@ setSpeed();
 let sideview = document.getElementById('sideview');
 let sidectx = sideview.getContext('2d');
 let sideImg = new Image();
-sideImg.src = "/images/beachbg.png";
+sideImg.src = "images/beachbg.png";
 
 let carnonA = new Image();
-carnonA.src = "/images/f1.gif";
+carnonA.src = "images/f1.gif";
 carnonA.onload = function() {
   sidectx.drawImage(carnonA, 170, 220, 150, 150);
 };
