@@ -756,7 +756,7 @@ function onDrawFrame(ctx, frame) {
   layer.draw();
 }
 
- var gif = gifler('/images/f1.gif').frames(sideview, onDrawFrame);
+ var gif = gifler('images/f1.gif').frames(sideview, onDrawFrame);
 }
 }, 500)
 // draw resulted canvas into the stage as Konva.Image
