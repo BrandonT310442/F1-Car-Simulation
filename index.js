@@ -854,8 +854,8 @@ function controls() {
  acceleration2 = ((ma2/mass)/3.6)*0.01; 
  if (brakingForce+ Math.abs(forceRizzistance) < staticFric ){
   isKeyed = false;
-  maxVelocity = 0;
-
+  // maxVelocity = 0;
+currVelocity = 0;
   var existingContent = errorElement.innerHTML.trim();
   
   if (existingContent === '' && !isEntered) {
